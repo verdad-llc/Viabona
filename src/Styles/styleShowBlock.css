@@ -1,0 +1,80 @@
+.showBlock {
+    width: 100%;
+    height: 200px;
+    //border: 2px solid black;
+    margin: 0 auto 0 auto;
+    border-radius: 10px;
+}
+.upShowBlock {
+    width: 100%;
+    height: 160px;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.botShowBlock {
+    block: flex;
+    width: 100%;
+    height: 40px;
+    border-radius: 0 0 10px 10px;
+}
+.upOneGridForShow {
+    padding: 5px 0px 0px 5px;
+    display: flex;
+}
+.timeShow{
+    font-size: 2em;
+    padding-right: 5px;
+}
+.dataShow {
+    background-color: #eeefe2;
+    height: 20px;
+    width: 60px;
+    border-radius: 5px;
+    padding-left: 2px;
+}
+.timeInRoad{
+    padding-top: 10px;
+    padding-left: 10px;
+    color: #7e7e7e;
+}
+.upTwoGridForShow{
+    width: 100%;
+    padding: 5px 0px 0px 10px;
+}
+.cityName{
+    font-size: 1.2em;
+}
+.butTic{
+    width: 100px;
+    height: 50px;
+    background-color: #ef3006;
+    color: white;
+    border-radius: 10px;
+}
+.threeGridForShow {
+    border-left-color: #ef40b0;
+    border-left-style: dotted;
+    border-left-width: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+.rightShowBlock{
+    padding-left: 0px;
+    margin: auto;
+}
+.leftShowBlock {
+    width: 200px;
+}
+.textPrice{
+    margin-top: 60px;
+    font-size: 1.5em;
+}
+.upTwoGridForShow{
+
+}
+.fixCalendar{
+    height: 90px;
+    width: 100%;
+}
