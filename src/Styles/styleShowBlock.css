@@ -1,7 +1,7 @@
 .showBlock {
     width: 100%;
     height: 200px;
-    //border: 2px solid black;
+    /*border: 2px solid black;*/
     margin: 0 auto 0 auto;
     border-radius: 10px;
 }
@@ -14,7 +14,9 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 .botShowBlock {
-    block: flex;
+    /*block: flex;*/
+    /*display: grid;*/
+    /*grid-template-columns: 1fr 1fr;*/
     width: 100%;
     height: 40px;
     border-radius: 0 0 10px 10px;
@@ -77,4 +79,55 @@
 .fixCalendar{
     height: 90px;
     width: 100%;
+}
+@media screen and (max-width:415px) {
+    .blockShow{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    .showBlock{
+        width: 100%;
+        height: 100%;
+
+    }
+    .upShowBlock{
+        width: 100%;
+        height: 240px;
+        display: block;
+        /*display: flex;*/
+        /*flex-direction: column;*/
+    }
+    .blockCalender {
+        display: none;
+    }
+    .fixCalendar{
+        width: 100%;
+        display: block;
+    }
+    .oneGridForShow {
+        width: 50%;
+        float: left;
+    }
+    .twoGridForShow {
+        float: left;
+        width: 50%;
+    }
+    .threeGridForShow {
+        width: 100%;
+    }
+    .botShowBlock{
+        width: 100%;
+        height: 100%;
+    }
+    .leftShowBlock{
+        /*width: 100%;*/
+    }
+    .detailsShow{
+        width: 90%;
+    }
+    .timeInRoad {
+        width: 200px;
+    }
 }
