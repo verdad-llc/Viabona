@@ -17,6 +17,7 @@
     /*block: flex;*/
     /*display: grid;*/
     /*grid-template-columns: 1fr 1fr;*/
+    cursor: pointer;
     width: 100%;
     height: 40px;
     border-radius: 0 0 10px 10px;
@@ -86,6 +87,9 @@
         display: flex;
         flex-direction: column;
 
+    }
+    .blockCalender{
+        display: none!important;
     }
     .showBlock{
         width: 100%;
