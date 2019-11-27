@@ -2,6 +2,35 @@
     padding: 0;
     margin: 0;
 }
+.mainImgLoad{
+    z-index: 5000000;
+    margin-top: 10px;
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.imgLoad {
+    width: 150px;
+    height: 100%;
+    background-image: url(../30.gif);
+    background-size: 100%;
+}
+.mainBlockError {
+    width: 100%;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.errorSend {
+    font-size: 1.8em;
+
+}
 .classPlus {
     position: absolute;
     margin-left: -20px;
@@ -318,8 +347,113 @@
     align-items: center;
     justify-content: center;
 }
+@media screen and (max-width:769px) {
+    .search-form--new {
 
-@media screen and (max-width:415px) {
+    }
+    .fixBox{
+        width: 100%;
+    }
+    .styleFindBlock {
+        padding: 0 25px;
+        border: none;
+        width: 100%;
+        height: 300px;
+        border-radius: 0;
+    }
+    .listIndex {
+        position: absolute;
+        z-index: 900;
+    }
+    .form-field__label {
+        z-index: 900;
+    }
+    .form-field {
+        z-index: 900;
+    }
+    .form-field--has-value {
+        z-index: 900;
+    }
+    .blockCalender {
+        display: none;
+    }
+    .blockShow {
+        width: 100%;
+    }
+    .next-date {
+        display: none;
+    }
+    .form-field__label {
+        z-index: 50000;
+    }
+    .form-field--has-value {
+        z-index: 900000;
+    }
+    .otkuda {
+        z-index: 900000;
+    }
+    .fixBox {
+        width: 100%;
+    }
+    .blockSign {
+        width: 100%;
+    }
+    h4 {
+        font-size: 1.2em;
+    }
+    .styleTextUserSend {
+        font-size: 1.3em;
+    }
+    .showSignBlockMain{
+        display: flex;
+        flex-direction: column;
+    }
+    .showSignBlock{
+        padding: 0;
+        margin: 0;
+    }
+    .showSignBlockTwo{
+        padding: 0;
+        margin: 0;
+    }
+    .styleTextUserSendReg {
+        font-size: 1.3em;
+    }
+    .textCab {
+        padding: 0;
+        margin: 0;
+    }
+    /*.newBlockPass {*/
+    /*    width: 50px;*/
+    /*    height: 500px;*/
+    /*    background: white;*/
+    /*    border: 2px solid black;*/
+    /*}*/
+    .classPlus {
+        font-size: 2.3em;
+        margin-top: 5px;
+        margin-left: -30px;
+    }
+    .classMinus {
+        font-size: 2.3em;
+        margin-top: 2px;
+        margin-left: -50px;
+    }
+    .cabin {
+        position: relative;
+        width: 100%;
+        margin-left: 0;
+    }
+    .topFix {
+        margin-top: 90px;
+    }
+    .errorSend {
+        font-size: 1.5em;
+        margin-left: 10px;
+    }
+}
+
+@media screen and (max-width:480px) {
     .search-form--new {
 
     }
@@ -419,7 +553,113 @@
     .topFix {
         margin-top: 90px;
     }
+    .errorSend {
+        font-size: 1.5em;
+        margin-left: 10px;
+    }
 }
+@media screen and (max-width:370px) {
+    .search-form--new {
 
-
-
+    }
+    .fixBox{
+        width: 100%;
+    }
+    .styleFindBlock {
+        padding: 0 25px;
+        border: none;
+        width: 100%;
+        height: 300px;
+        border-radius: 0;
+    }
+    .listIndex {
+        position: absolute;
+        z-index: 900;
+    }
+    .form-field__label {
+        z-index: 900;
+    }
+    .form-field {
+        z-index: 900;
+    }
+    .form-field--has-value {
+        z-index: 900;
+    }
+    .blockCalender {
+        display: none;
+    }
+    .blockShow {
+        width: 100%;
+    }
+    .next-date {
+        display: none;
+    }
+    .form-field__label {
+        z-index: 50000;
+    }
+    .form-field--has-value {
+        z-index: 900000;
+    }
+    .otkuda {
+        z-index: 900000;
+    }
+    .fixBox {
+        width: 100%;
+    }
+    .blockSign {
+        width: 100%;
+    }
+    h4 {
+        font-size: 1.2em;
+    }
+    .styleTextUserSend {
+        font-size: 1.3em;
+    }
+    .showSignBlockMain{
+        display: flex;
+        flex-direction: column;
+    }
+    .showSignBlock{
+        padding: 0;
+        margin: 0;
+    }
+    .showSignBlockTwo{
+        padding: 0;
+        margin: 0;
+    }
+    .styleTextUserSendReg {
+        font-size: 1.3em;
+    }
+    .textCab {
+        padding: 0;
+        margin: 0;
+    }
+    /*.newBlockPass {*/
+    /*    width: 50px;*/
+    /*    height: 500px;*/
+    /*    background: white;*/
+    /*    border: 2px solid black;*/
+    /*}*/
+    .classPlus {
+        font-size: 2.3em;
+        margin-top: 5px;
+        margin-left: -30px;
+    }
+    .classMinus {
+        font-size: 2.3em;
+        margin-top: 2px;
+        margin-left: -50px;
+    }
+    .cabin {
+        position: relative;
+        width: 100%;
+        margin-left: 0;
+    }
+    .topFix {
+        margin-top: 90px;
+    }
+    .errorSend {
+        font-size: 1.5em;
+        margin-left: 10px;
+    }
+}

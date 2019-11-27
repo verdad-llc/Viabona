@@ -1,4 +1,5 @@
 import React from 'react';
+import { Lines } from 'react-preloaders';
 import Moment from 'react-moment';
 import 'moment-timezone';
 import '../Styles/style.css';
@@ -16,6 +17,9 @@ import 'moment/min/moment-with-locales'
 import axios from 'axios';
 import Autocomplete from 'react-autocomplete';
 import Switch from "react-switch";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import App from "../App";
+
 
 class Finder extends React.Component{
     constructor(props){
@@ -42,6 +46,7 @@ class Finder extends React.Component{
             visibleCalendar : 'none',
             direct : false,
             goback : false,
+            loading: true,
             to : 'Варшава',
             displayCalendar : 'none',
             showByTic: 'none',
@@ -67,14 +72,27 @@ class Finder extends React.Component{
             showSign:true,
             showReg:false,
             showBlockNone: false,
+            loadingTwo: false,
             NameUser: "Вход/Регистрация",
             sessionUserActiv: [],
             //переменные для сесии
             nameS: "",
             surnameS: "",
             emailS: "",
-            phoneS: ""
+            phoneS: "",
             //end session
+            arrTic: {},
+            arrBy: {},
+            infForLiq: [],
+            priceBy: '',
+            currNameBy: '',
+            resErrorRace: false,
+            tripInfForBy: '',
+            stDepAddrInfForBy: '',
+            stArrNameInfForBy: '',
+            DepInfForBy: '',
+            ArrInfForBy: '',
+
 
 
         };
@@ -104,9 +122,23 @@ class Finder extends React.Component{
         this.phoneS = this.phoneS.bind(this);
         this.showByTic = this.showByTic.bind(this);
         this.backStup =  this.backStup.bind(this);
+        this.PayArr = this.PayArr.bind(this);
+        this.loadin = this.loadin.bind(this);
         // this.manageDay = this.manageDay.bind(this);
         //this.handleSelectTrip = this.handleSelectTrip.bind(this);
 
+    }
+    PayArr(name, surname, email, phone) {
+        let arrBy = this.state.arrBy;
+        arrBy.name = name;
+        arrBy.surname = surname;
+        arrBy.email = email;
+        arrBy.phone = phone;
+
+            let infForLiq1 = this.state.infForLiq;
+            infForLiq1.arrBy = arrBy;
+            infForLiq1.arrTic = this.state.arrTic;
+        console.log(this.state.infForLiq);
     }
     backStup(){
         this.setState({
@@ -114,20 +146,42 @@ class Finder extends React.Component{
             blockShow: 'block'
         })
     }
-    showByTic(price, trip, dtArr, stArrName, dtDep, stDepAddr){
+    showByTic(price, currency, trip, dtArr, stArrName, dtDep, stDepAddr, pass, currName){
         this.setState({
             showByTic: 'block',
             blockShow: 'none'
         });
-        let arrUser = [];
+        let arrUser = this.state.arrTic;
         arrUser.price = price;
+        arrUser.currency = currency;
         arrUser.trip = trip;
         arrUser.dtArr = dtArr;
         arrUser.stArrName = stArrName;
         arrUser.dtDep = dtDep;
         arrUser.stDepAddr = stDepAddr;
+        arrUser.passengers = pass;
+        arrUser.currName = currName;
+        this.setState({
+            priceBy: price * pass,
+            currNameBy: currName,
+            tripInfForBy: trip,
+            stDepAddrInfForBy: stDepAddr,
+            stArrNameInfForBy: stArrName,
+            DepInfForBy: dtDep,
+            ArrInfForBy: dtArr
 
-        console.log(arrUser);
+        })
+
+        // this.setState({
+        //     arrTic: arrUser,
+        // })
+        // arrUser.name = this.state.nameS;
+        // arrUser.surname = this.state.surnameS;
+        // arrUser.email = this.state.emailS;
+        // arrUser.phone = this.state.phoneS;
+
+
+        console.log(this.state.arrTic);
     }
     nameS(el){
             this.setState({nameS: el.target.value});
@@ -207,13 +261,13 @@ class Finder extends React.Component{
                 erPassword: 'errorPassword',
             });
         }
-        if(this.state.surname.length < 8 ) {
+        if(this.state.surname.length < 4 ) {
             canSentForm = false;
             this.setState({
                 erSurname: 'errorSurname'
             });
         }
-        if(this.state.nameTest.length < 8 ) {
+        if(this.state.nameTest.length < 4 ) {
             canSentForm = false;
             this.setState({
                 erName: 'errorName'
@@ -268,7 +322,7 @@ class Finder extends React.Component{
                 this.sessionUser();
 
             });
-            console.log(this.state.loginAuth);
+            console.log(this.state.loginAuth, this.state.passwordAuth);
 
          };
         // this.sessionUser();
@@ -342,7 +396,10 @@ class Finder extends React.Component{
             toID : _fromID,
         });
     }
+
     componentDidMount(){
+
+
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getCityList').then(res => {
             this.setState({
                 cityList : res.data
@@ -355,12 +412,19 @@ class Finder extends React.Component{
             this.setState({surnameS: localStorage.surname});
         }
         if (localStorage.email){
-            this.setState({emailS: localStorage.name});
+            this.setState({emailS: localStorage.email});
         }
         if (localStorage.phone){
-            this.setState({S: localStorage.name});
+            this.setState({phoneS: localStorage.phone});
         }
-
+        fetch('https://jsonplaceholder.typicode.com/todos/1')
+            .then(response => response.json())
+            .then(json => {
+                this.setState({ loading: false });
+            })
+            .catch(err => {
+                this.setState({ loading: true });
+            });
     }
 
     handleChangeDate(date){
@@ -384,6 +448,7 @@ class Finder extends React.Component{
 
     }
     handleSubmit(el){
+        this.loadin();
 
         let direct = this.state.direct ? this.state.direct : 0;
         let on_date = this.state.on;
@@ -446,13 +511,36 @@ class Finder extends React.Component{
                 };
                 funcDate(dataCalendarTest);
                 findInArray(arrActive, arrDate);
-                this.setState({ dataCalendar : arrDate});
+                this.setState({
+                    dataCalendar : arrDate,
+                    resErrorRace: false,
+                    showByTic: 'none',
+                    blockShow: 'block'
+                });
+
 
             }else{
-                alert(res.data.error.name);
+                this.setState({
+                resErrorRace: true,
+                showByTic: 'none',
+                blockShow: 'none'
+                })
             }
         });
 
+
+    }
+    loadin(){
+        this.setState({
+            loadingTwo: true
+        })
+        setTimeout(
+            function() {
+                this.setState({loadingTwo: false});
+            }
+                .bind(this),
+            5000
+        );
 
     }
     testFunction(el){
@@ -504,6 +592,7 @@ class Finder extends React.Component{
 
         return(
 
+
             <div >
 
             <div className="mainMainBlock" >
@@ -513,6 +602,7 @@ class Finder extends React.Component{
                         :
                         <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Войти/зарегестрироватся</p></div>}
                 </div>
+
                 {/*<p>{this.dataSessionUser()}</p>*/}
 
             {/*    {*/}
@@ -771,10 +861,25 @@ class Finder extends React.Component{
                     </div>
                 </div>
                 </div>
+                    <div>{
+                        this.state.loadingTwo?
+                            <div className="mainImgLoad">
+                                <div className="imgLoad"></div>
+                            </div>
+                            : null
+                    }
+                    </div>
+                    <div className='mainBlockError'>
+                        { this.state.resErrorRace ?
+                            <p className="errorSend"> к сожалению по вашему запросу не найдено рейсов в назначеную дату</p>
+                            :
+                            null
+                        }
+                    </div>
                     {/*<div className="blockCalender" style={{display: this.state.visibleCalendar}}>*/}
                     <div className="blockCalender"  style={{display: this.state.blockShow}}>
 
-                    <div className="calendar__prev" >
+                    <div className="calendar__prev" style={{display: this.state.visibleCalendar}} >
                         </div>
                         {/*календарь*/}
                         { this.state.dataCalendar.map((dateCalendar, key) =>
@@ -791,7 +896,7 @@ class Finder extends React.Component{
                             </div>
 
                         )}
-                        <div className="calendar__next">
+                        <div className="calendar__next" style={{display: this.state.visibleCalendar}}>
                         </div>
                     </div>
                 </div>
@@ -850,9 +955,9 @@ class Finder extends React.Component{
                                             <p className='textPrice' style={{float: 'right'}}>{list.price} {list.currName}</p>
                                         </div>
                                         <div className='rightShowBlock'>
-                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr)}>Выбрать</button>
+                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName)}>Выбрать</button>
                                             <br/>
-                                            <p style={{color: 'red'}}>{list.places} мест</p>
+                                            <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1080,7 +1185,9 @@ class Finder extends React.Component{
                                                     <div className="verify-panel__picker-btn disabled">
                                                         <button type="button" className="btn free" tabIndex="-1">
                                                             <span><i className="icon icon-seat-v2"></i></span><span
-                                                            className="verify-panel__picker-description">Свободная рассадка</span>
+                                                            className="verify-panel__picker-description">
+                                                            <p>количество мест: {this.state.passengers} </p>
+                                                        </span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1120,12 +1227,20 @@ class Finder extends React.Component{
                             </div>
 
                         </div>
+                        <div className="checkout-panel checkout__customer"><p
+                            className="checkout__customer-title">Информация о рейсе</p><p
+                            className="checkout__customer-text">
+                            рейс: {this.state.tripInfForBy} <br/>
+                            отправление: {this.state.stDepAddrInfForBy}  <br/>
+                            {this.state.DepInfForBy} <br/>
+                            отправление: {this.state.stArrNameInfForBy}  <br/>
+                            {this.state.ArrInfForBy}
+                        </p>
+
+
+                        </div>
                         <div className="checkout-panel checkout__payment">
-                            <div className="checkout__payment-header"><span>К оплате</span><span><div
-                                className="text-center"><span className="price"><span
-                                className="price__ammount">330<span className="price__fraction">,00 <span
-                                className="Currency__StyledCurrency-sc-1jdgn94-0 dlqcdB currency">грн</span></span></span></span></div></span>
-                            </div>
+                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy}</div>
                             <div className="checkout__payment-info">
                                 <div className="checkout__payment-info-text">Ваши платежные и личные данные надежно
                                     защищены в соответствии с международными стандартами безопасности.
@@ -1136,31 +1251,14 @@ class Finder extends React.Component{
                                     <div className="filling-info__pay-item filling-info__pay-visa"></div>
                                 </div>
                             </div>
-                            <div className="checkout__agreement checkout__custom-checkbox flat__form">
-                                <div className="m-verify-panel__policy">
-                                    <div className="checkbox checkbox-primary verify-panel__checkbox"><input
-                                        type="checkbox" id="checkbox-df0dacb38e2f7" /><label
-                                        htmlFor="checkbox-df0dacb38e2f7"><i className="verify-panel__checkbox-icon"></i><span>Я принимаю условия <span
-                                        data-type="agreement"
-                                        className="interactive-link text-primary">публичной оферты</span>, <span
-                                        data-type="privacyPolicy" className="interactive-link text-primary">политики конфиденциальности</span> и <span
-                                        data-type="refundPolicy"
-                                        className="interactive-link text-primary">возврата</span>.</span></label></div>
-                                </div>
-                                <div className="m-verify-panel__policy">
-                                    <div className="checkbox checkbox-primary verify-panel__checkbox"><input
-                                        type="checkbox" id="checkbox-d370473cc6605" /><label
-                                        htmlFor="checkbox-d370473cc6605"><i className="verify-panel__checkbox-icon"></i><span>Я даю <span
-                                        data-type="dataProcessingAgreement" className="interactive-link text-primary">согласие на обработку персональных данных</span>.</span></label>
-                                    </div>
-                                </div>
-                            </div>
+
+
                         </div>
                         <div className="checkout-submit-btn">
                             <div>
-                                <button type="submit" id="checkout_submit"
-                                        className="btn btn-primary btn-sm btn-block disabled btn--checkout"
-                                        data-uikitid="button.827246539605">Продолжить
+                                <button type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
+                                        onClick={() => this.PayArr(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
+                                    Продолжить
                                 </button>
                             </div>
                         </div>
@@ -1169,7 +1267,12 @@ class Finder extends React.Component{
                     </div>
                 </div>
             </div>
+                <React.Fragment>
+                    {/*<Finder />*/}
+                    <Lines customLoading={this.state.loading} />
+                </React.Fragment>
             </div>
+
         )
     }
 }
