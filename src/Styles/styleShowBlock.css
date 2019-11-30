@@ -1,7 +1,7 @@
 .showBlock {
     width: 100%;
     height: 200px;
-    //border: 2px solid black;
+    /*border: 2px solid black;*/
     margin: 0 auto 0 auto;
     border-radius: 10px;
 }
@@ -14,7 +14,10 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 .botShowBlock {
-    block: flex;
+    /*block: flex;*/
+    /*display: grid;*/
+    /*grid-template-columns: 1fr 1fr;*/
+    cursor: pointer;
     width: 100%;
     height: 40px;
     border-radius: 0 0 10px 10px;
@@ -77,4 +80,267 @@
 .fixCalendar{
     height: 90px;
     width: 100%;
+}
+@media screen and (max-width:1204px) {
+    .blockShow{
+        width: 100%;
+
+    }
+}
+@media screen and (max-width:769px) {
+    .blockShow{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    .blockCalender{
+        display: none!important;
+    }
+    .showBlock{
+        width: 100%;
+        height: 100%;
+
+    }
+    .upShowBlock{
+        width: 100%;
+        height: 190px;
+        display: block;
+        /*display: flex;*/
+        /*flex-direction: column;*/
+    }
+    .blockCalender {
+        display: none;
+    }
+    .fixCalendar{
+        width: 100%;
+        display: block;
+    }
+    .oneGridForShow {
+        width: 50%;
+        float: left;
+    }
+    .twoGridForShow {
+        float: left;
+        width: 50%;
+    }
+    .threeGridForShow {
+        width: 100%;
+        border-left: none;
+        /*background: red;*/
+    }
+    .botShowBlock{
+        width: 100%;
+        height: 100%;
+    }
+    .leftShowBlock{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .textPrice{
+        margin-top: 0px;
+        /*margin-left: 20px;*/
+        font-size: 1.5em;
+    }
+    .detailsShow{
+        width: 90%;
+    }
+    .timeInRoad {
+        position: relative;
+        margin-top: 0px;
+        width: 200px;
+    }
+    .rightShowBlock{
+        width: 100%;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .textPass {
+        margin-top: 15px;
+        margin-right: 15px;
+        margin-left: 0px;
+    }
+    .butTic{
+        width: 80px;
+        margin-right: 10px;
+        border-radius: 10px 10px;
+    }
+    .dataShow {
+        width: 60px;
+    }
+    .upOneGridForShow{}
+    .cityName{
+        font-size: 1em;
+    }
+}
+@media screen and (max-width:480px) {
+    .blockShow{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    .blockCalender{
+        display: none!important;
+    }
+    .showBlock{
+        width: 100%;
+        height: 100%;
+
+    }
+    .upShowBlock{
+        width: 100%;
+        height: 190px;
+        display: block;
+        /*display: flex;*/
+        /*flex-direction: column;*/
+    }
+    .blockCalender {
+        display: none;
+    }
+    .fixCalendar{
+        width: 100%;
+        display: block;
+    }
+    .oneGridForShow {
+        width: 50%;
+        float: left;
+    }
+    .twoGridForShow {
+        float: left;
+        width: 50%;
+    }
+    .threeGridForShow {
+        width: 100%;
+        border-left: none;
+        /*background: red;*/
+    }
+    .botShowBlock{
+        width: 100%;
+        height: 100%;
+    }
+    .leftShowBlock{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .textPrice{
+       margin-top: 0px;
+        /*margin-left: 20px;*/
+        font-size: 1.5em;
+    }
+    .detailsShow{
+        width: 90%;
+    }
+    .timeInRoad {
+        position: absolute;
+        margin-top: 25px;
+        width: 200px;
+    }
+    .rightShowBlock{
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .textPass {
+        margin-top: 15px;
+        margin-right: 10px;
+    }
+    .butTic{
+        border-radius: 10px 0 0 0;
+    }
+    .dataShow {
+        width: 60px;
+    }
+    .upOneGridForShow{}
+}
+@media screen and (max-width:370px) {
+    .blockShow{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    .blockCalender{
+        display: none!important;
+    }
+    .showBlock{
+        width: 100%;
+        height: 100%;
+
+    }
+    .upShowBlock{
+        width: 100%;
+        height: 190px;
+        display: block;
+        /*display: flex;*/
+        /*flex-direction: column;*/
+    }
+    .blockCalender {
+        display: none;
+    }
+    .fixCalendar{
+        width: 100%;
+        display: block;
+    }
+    .oneGridForShow {
+        width: 50%;
+        float: left;
+    }
+    .twoGridForShow {
+        float: left;
+        width: 50%;
+    }
+    .threeGridForShow {
+        width: 100%;
+        border-left: none;
+        /*background: red;*/
+    }
+    .botShowBlock{
+        width: 100%;
+        height: 100%;
+    }
+    .leftShowBlock{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .textPrice{
+        margin-top: 0px;
+        /*margin-left: 20px;*/
+        font-size: 1.5em;
+    }
+    .detailsShow{
+        width: 90%;
+    }
+    .timeInRoad {
+        position: absolute;
+        margin-top: 25px;
+        width: 200px;
+    }
+    .rightShowBlock{
+        width: 100%;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .textPass {
+        margin-top: 15px;
+        margin-right: 20px;
+        margin-left: 0px;
+    }
+    .butTic{
+        width: 80px;
+
+        border-radius: 10px 0 0 0;
+    }
+    .dataShow {
+        width: 60px;
+    }
+    .upOneGridForShow{}
+    .cityName{
+        font-size: 1em;
+    }
 }

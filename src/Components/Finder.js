@@ -1,4 +1,5 @@
 import React from 'react';
+import { Lines } from 'react-preloaders';
 import Moment from 'react-moment';
 import 'moment-timezone';
 import '../Styles/style.css';
@@ -16,9 +17,13 @@ import 'moment/min/moment-with-locales'
 import axios from 'axios';
 import Autocomplete from 'react-autocomplete';
 import Switch from "react-switch";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import App from "../App";
+
 
 class Finder extends React.Component{
     constructor(props){
+
         super(props);
         this.state = { showMe:true};
         this.state = {
@@ -41,10 +46,13 @@ class Finder extends React.Component{
             visibleCalendar : 'none',
             direct : false,
             goback : false,
+            loading: true,
             to : 'Варшава',
             displayCalendar : 'none',
+            showByTic: 'none',
+            blockShow: 'block',
             on : new Date(),
-            passengers : 1,
+            passengers : '1',
             cityList: [],
             tripList: [],
             dataCalendar: [],
@@ -59,9 +67,34 @@ class Finder extends React.Component{
             //data gor auth
             loginAuth: "",
             passwordAuth: "",
+            erAuth: "erAuthNone",
             //end data for auth
             showSign:true,
-            showReg:false
+            showReg:false,
+            showBlockNone: false,
+            loadingTwo: false,
+            NameUser: "Вход/Регистрация",
+            sessionUserActiv: [],
+            //переменные для сесии
+            nameS: "",
+            surnameS: "",
+            emailS: "",
+            phoneS: "",
+            //end session
+            arrTic: {},
+            arrBy: {},
+            infForLiq: [],
+            priceBy: '',
+            currNameBy: '',
+            resErrorRace: false,
+            tripInfForBy: '',
+            stDepAddrInfForBy: '',
+            stArrNameInfForBy: '',
+            DepInfForBy: '',
+            ArrInfForBy: '',
+
+
+
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -77,11 +110,132 @@ class Finder extends React.Component{
         this.regFunction  = this.regFunction.bind(this);
         this.subDataForReg = this.subDataForReg.bind(this);
         this.subDataForAuth = this.subDataForAuth.bind(this);
+        this.showBlockRegister = this.showBlockRegister.bind(this);
+        this.passInp = this.passInp.bind(this);
+        this.sessionUser = this.sessionUser.bind(this);
+        this.dataSessionUser = this.dataSessionUser.bind(this);
+        this.deleteLocal = this.deleteLocal.bind(this);
+        //заказ билета
+        this.nameS = this.nameS.bind(this);
+        this.surnameS = this.surnameS.bind(this);
+        this.emailS = this.emailS.bind(this);
+        this.phoneS = this.phoneS.bind(this);
+        this.showByTic = this.showByTic.bind(this);
+        this.backStup =  this.backStup.bind(this);
+        this.PayArr = this.PayArr.bind(this);
+        this.loadin = this.loadin.bind(this);
         // this.manageDay = this.manageDay.bind(this);
         //this.handleSelectTrip = this.handleSelectTrip.bind(this);
 
     }
+    PayArr(name, surname, email, phone) {
+        let arrBy = this.state.arrBy;
+        arrBy.name = name;
+        arrBy.surname = surname;
+        arrBy.email = email;
+        arrBy.phone = phone;
 
+            let infForLiq1 = this.state.infForLiq;
+            infForLiq1.arrBy = arrBy;
+            infForLiq1.arrTic = this.state.arrTic;
+        console.log(this.state.infForLiq);
+    }
+    backStup(){
+        this.setState({
+            showByTic: 'none',
+            blockShow: 'block'
+        })
+    }
+    showByTic(price, currency, trip, dtArr, stArrName, dtDep, stDepAddr, pass, currName){
+        this.setState({
+            showByTic: 'block',
+            blockShow: 'none'
+        });
+        let arrUser = this.state.arrTic;
+        arrUser.price = price;
+        arrUser.currency = currency;
+        arrUser.trip = trip;
+        arrUser.dtArr = dtArr;
+        arrUser.stArrName = stArrName;
+        arrUser.dtDep = dtDep;
+        arrUser.stDepAddr = stDepAddr;
+        arrUser.passengers = pass;
+        arrUser.currName = currName;
+        this.setState({
+            priceBy: price * pass,
+            currNameBy: currName,
+            tripInfForBy: trip,
+            stDepAddrInfForBy: stDepAddr,
+            stArrNameInfForBy: stArrName,
+            DepInfForBy: dtDep,
+            ArrInfForBy: dtArr
+
+        })
+
+        // this.setState({
+        //     arrTic: arrUser,
+        // })
+        // arrUser.name = this.state.nameS;
+        // arrUser.surname = this.state.surnameS;
+        // arrUser.email = this.state.emailS;
+        // arrUser.phone = this.state.phoneS;
+
+
+        console.log(this.state.arrTic);
+    }
+    nameS(el){
+            this.setState({nameS: el.target.value});
+    }
+    surnameS(el){
+        this.setState({surnameS: el.target.value});
+    }
+    emailS(el){
+        this.setState({emailS: el.target.value});
+    }
+    phoneS(el){
+        this.setState({phoneS: el.target.value});
+    }
+
+    deleteLocal() {
+
+        localStorage.removeItem("name");
+        localStorage.removeItem("surname");
+        localStorage.removeItem("email");
+        localStorage.removeItem("phone");
+        this.setState({
+            nameS: "",
+            surnameS: "",
+            emailS: "",
+            phoneS: ""
+        })
+
+    }
+
+    passInp(data) {
+        let temp_pas = this.state.passengers;
+        temp_pas = parseInt(temp_pas)+parseInt(data);
+        if (temp_pas == 0){
+            temp_pas = 1;
+        }
+        this.setState({passengers: temp_pas});
+        // if(this.state.passengers > 1) {
+        //     this.setState({
+        //         passengers: this.state.passengers + data,
+        //     })
+        // } else {
+        //     this.setState({
+        //         passengers: '1',
+        //     })
+        // }
+
+
+
+    }
+    showBlockRegister() {
+        this.setState({
+            showBlockNone: !this.state.showBlockNone
+        })
+    }
     subDataForReg() {
         let canSentForm = true;
         this.setState({
@@ -107,13 +261,13 @@ class Finder extends React.Component{
                 erPassword: 'errorPassword',
             });
         }
-        if(this.state.surname.length < 8 ) {
+        if(this.state.surname.length < 4 ) {
             canSentForm = false;
             this.setState({
                 erSurname: 'errorSurname'
             });
         }
-        if(this.state.nameTest.length < 8 ) {
+        if(this.state.nameTest.length < 4 ) {
             canSentForm = false;
             this.setState({
                 erName: 'errorName'
@@ -140,41 +294,90 @@ class Finder extends React.Component{
     }
     subDataForAuth() {
         let canSentForm = true;
-        // if (this.state.login.length < 5){
-        //    canSentForm = false;
-        //     this.setState({
-        //       errorLogin: 'blabla',
-        //        displayLogin: 'block'
-        //     });
-        // }
+
         if (canSentForm){
             axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyerlogin?login=' + this.state.loginAuth + '&password=' + this.state.passwordAuth).then(res => {
                 console.log(res.data);
+                let registered = res.data.registered;
+                if(registered === undefined) {
+                    this.setState({
+                        erAuth: "erAuth"
+                        }
+                    )
+                }
+                else {
+                    this.setState({
+                        showBlockNone: !this.state.showBlockNone,
+                        NameUser: "вы вошли как " + res.data.name
+                    })
+                }
+                this.setState({
+                    nameTest: res.data.name,
+                    surname: res.data.surname,
+                    email: res.data.email,
+                    phone: res.data.phone
+                })
+                console.log(this.state.email);
+
+                this.sessionUser();
+
             });
-            console.log(this.state.loginAuth);
-         }
+            console.log(this.state.loginAuth, this.state.passwordAuth);
+
+         };
+        // this.sessionUser();
+
+    }
+
+    sessionUser(){
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/sessionuser?surname=' +  this.state.surname  + '&name=' +  this.state.nameTest +  '&email=' + this.state.email + '&phone=' + this.state.phone).then(res => {
+
+            // console.log(res.data);
+            localStorage.name = res.data.name;
+            localStorage.surname = res.data.surname;
+            localStorage.email = res.data.email;
+            localStorage.phone = res.data.phone;
+
+            this.setState({
+                nameS: localStorage.name,
+                surnameS: localStorage.surname,
+                emailS: localStorage.email,
+                phoneS: localStorage.phone
+            });
+            this.setState({
+                NameUser: res.data.name
+            });
+            this.setState({
+                sessionUserActiv : res.data
+            });
+            // console.log(this.state.sessionUserActiv.name)
+        });
+    }
+    dataSessionUser(){
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/sessionuserdata').then(res => {
+
+        console.log(res.data);
+            this.setState({
+                sessionUserActiv : res.data.name
+            });
+
+    });
 
     }
     signFunction() {
         //alert('hello world');
         this.setState({
-            showSign: !this.state.showSign
+            showSign: !this.state.showSign,
+            showReg: false
         })
     }
     regFunction() {
         this.setState({
+            showSign: false,
             showReg: !this.state.showReg
         })
     }
-    // componentDidMount() {
-    //     this.setState({cityList: [123,123]});
-    //     this.cityList();alert();
-    // }
-    // manageDay(val) {
-    //     alert(data);
-    //    let resp = this.moment(data).add(1, 'days');
-    //    this.setState({minusone: resp});
-    //  }
+
 
     handleDayChange(day){
         this.setState({on : day});
@@ -193,13 +396,35 @@ class Finder extends React.Component{
             toID : _fromID,
         });
     }
+
     componentDidMount(){
+
+
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getCityList').then(res => {
             this.setState({
                 cityList : res.data
             });
         });
-
+        if (localStorage.name){
+            this.setState({nameS: localStorage.name});
+        }
+        if (localStorage.surname){
+            this.setState({surnameS: localStorage.surname});
+        }
+        if (localStorage.email){
+            this.setState({emailS: localStorage.email});
+        }
+        if (localStorage.phone){
+            this.setState({phoneS: localStorage.phone});
+        }
+        fetch('https://jsonplaceholder.typicode.com/todos/1')
+            .then(response => response.json())
+            .then(json => {
+                this.setState({ loading: false });
+            })
+            .catch(err => {
+                this.setState({ loading: true });
+            });
     }
 
     handleChangeDate(date){
@@ -223,6 +448,7 @@ class Finder extends React.Component{
 
     }
     handleSubmit(el){
+        this.loadin();
 
         let direct = this.state.direct ? this.state.direct : 0;
         let on_date = this.state.on;
@@ -285,17 +511,36 @@ class Finder extends React.Component{
                 };
                 funcDate(dataCalendarTest);
                 findInArray(arrActive, arrDate);
+                this.setState({
+                    dataCalendar : arrDate,
+                    resErrorRace: false,
+                    showByTic: 'none',
+                    blockShow: 'block'
+                });
 
-                console.log(arrDate);
-                console.log(allDate);
-                console.log(allDay);
-                this.setState({ dataCalendar : arrDate});
 
             }else{
-                alert(res.data.error.name);
+                this.setState({
+                resErrorRace: true,
+                showByTic: 'none',
+                blockShow: 'none'
+                })
             }
         });
 
+
+    }
+    loadin(){
+        this.setState({
+            loadingTwo: true
+        })
+        setTimeout(
+            function() {
+                this.setState({loadingTwo: false});
+            }
+                .bind(this),
+            5000
+        );
 
     }
     testFunction(el){
@@ -303,32 +548,21 @@ class Finder extends React.Component{
        this.handleSubmit(el);
 
     }
-
-    // handleSelectTrip(tripId){
-    //  return;
-    //     alert('find records process');
-    //     let tripId = this.setState.tripList.tripId;
-    //     // https://testapi:4Br65H843k@octobusdemo.cloud/api/cgi-bin/gtmapp/wapi/trip?currency=UAH&passcount=1&id=qm17w3DVjJ6UDFpfo5cdv-QPmOArcNp3Q995hFo60Iv1zCB-V-UDmn1elE3xZssL
-    //     // axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers).then(res => {
-    //     axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers).then(res => {
-    //         console.log(res.data);
-    //         if (!res.data.error){
-    //             this.setState({visibleCalendar : 'block'});
-    //             this.setState({ tripList : res.data});
-    //
-    //         }else{
-    //             alert(res.data.error.name);
-    //         }
-    //     });
-    // }
     displayCalendar(){
         this.setState({displayCalendar : 'block'});
     }
-    infoBlock()
-    {
-      this.setState({
-          showMe: !this.state.showMe
-      })
+    // infoBlock()
+    // {
+    //   this.setState({
+    //       showMe: !this.state.showMe
+    //   })
+    // }
+    infoBlock = id => e => {
+        console.log(id);
+        console.log(e.target.value);
+        let _InviteList = this.state.tripList;
+        _InviteList[id].showDateil = !_InviteList[id].showDateil;
+        this.setState({tripList : _InviteList});
     }
 
     render() {
@@ -341,7 +575,6 @@ class Finder extends React.Component{
         const autoCompleteWrapperStyle = {
             textTransform: 'none',
         padding: '5px 11px',
-        // backgroundColor: '#f4f4f4',
         color: '#939393',
         fontSize: '17px',
             height: '300px',
@@ -351,15 +584,102 @@ class Finder extends React.Component{
         borderBottomLeftRadius: '5px',
         borderBottomRightRadius: '5px'
         };
+        // this.sessionUser();
         const pushme = [];
+        let arrayForSession = this.state.sessionUserActiv;
+
+
+
         return(
 
-            <div className='a' data-react-class="SearchForm">
+
+            <div >
+
+            <div className="mainMainBlock" >
                 <div className="myCab" >
-                    <div><p className='textCab'>Личный кабинет</p></div>
+                    {localStorage.name ?
+                        <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.deleteLocal()}>вы вошли как: {localStorage.name}   /  выйти </p></div>
+                        :
+                        <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Войти/зарегестрироватся</p></div>}
                 </div>
+
+                {/*<p>{this.dataSessionUser()}</p>*/}
+
+            {/*    {*/}
+            {/*    this.state.sessionUserActiv.map(function(item, i){*/}
+            {/*    console.log('test');*/}
+            {/*})}*/}
+
+                {/* форма реестрации*/}
+                <div className="blockSign" style={{display: this.state.showBlockNone ? 'block' : 'none'}}>
+                    <div >
+                        <div >
+                            <div >
+                                <div className="showSignBlock">
+                                    <h4 style={{ cursor: 'pointer'}} onClick={()=>this.signFunction()}>Уже зарегистрированы? Войти</h4>
+                                    <div style={{display: this.state.showSign ? 'block' : 'none' }}>
+                                        <div className="showSignBlock">
+                                            <p className="styleTextUser">Логин</p>
+                                            <input className="inputUser" type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
+                                            {/*<p style={{display: this.state.displayLogin, color:'red'}}>error login</p>*/}
+
+                                            <p className="styleTextUser">Пароль</p>
+                                            <input className="inputUser" type="password" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
+                                            <p className={this.state.erAuth}>Логин или пароль введены не верно</p>
+
+                                            <p  className="styleTextUserSend" onClick={this.subDataForAuth}>авторизироватся</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div >
+                            <div className="showSignBlock">
+                                <div><span>------------------------или------------------------</span></div>
+                                <h4 onClick={()=>this.regFunction()}>Нет аккаунта? Зарегистрироваться</h4>
+                                <div  style={{display: this.state.showReg ? 'block' : 'none' }}>
+                                <div>
+                                    <div className="showSignBlockMain">
+                                        <div className="showSignBlock">
+                                            <p className="styleTextUser">Логин:</p>
+                                            <input placeholder="Логин" type="text" className="inputUser {this.state.errorLogin}" name="login" value={this.state.login} onChange={this.handleChange}/>
+                                            <p className={this.state.erLogin}>не коректно введен логин </p>
+                                            <p className="styleTextUser">Пароль:</p>
+                                            <input  placeholder="Пароль" className="inputUser" type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
+                                            <p className={this.state.erPassword}>не коректный пароль</p>
+                                            <p className="styleTextUser">email:</p>
+                                            <input placeholder="your@gmail.com" className="inputUser" type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+                                            <p className={this.state.erEmail}>Введите емеил коректно</p>
+
+                                        </div>
+                                        <div className="showSignBlockTwo">
+                                            <p  className="styleTextUser">Имя:</p>
+                                            <input placeholder="Ваше имя" className="inputUser" type="text" name="nameTest" value={this.state.nameTest} onChange={this.handleChange}/>
+                                            <p className={this.state.erName}>Введите имя коректно</p>
+                                            <p className="styleTextUser">Фамилия:</p>
+                                            <input placeholder="Ваша фамилия" className="inputUser" type="text" name="surname" value={this.state.surname} onChange={this.handleChange}/>
+                                            <p className={this.state.erSurname}>Фамилия введена не корректно</p>
+                                            <p className="styleTextUser">телефон:</p>
+                                            <input placeholder="+38 099-000-00-00" className="inputUser" type="text" name="phone" value={this.state.phone} onChange={this.handleChange}/>
+                                            <p className={this.state.erPhone}>Введите мобильный номер корректно</p>
+                                        </div>
+                                    </div>
+                                <div className="classForButSendReg">
+                                    {/*<input type="text" value={this.state.login} onChange={(event)=>this.DataForReg(event) => {}} />*/}
+                                    <p className="styleTextUserSendReg" onClick={this.subDataForReg}>регистрация</p>
+                                </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/*    конец блока регистрации*/}
                 <div className="fixBox">
                 <div className="styleFindBlock">
+
 
                 <div className="search-form--new">
                     <div className="search-form__group search-form__group--from flex-2 search-form__group--white"
@@ -367,10 +687,10 @@ class Finder extends React.Component{
                         <div className="">
                             <div style={{position:'relative'}}>
                                 <div>
-                                    <div className="form-field form-field--has-value">
+                                    <div className="form-field form-field--has-value" style={{zIndex: '500'}}>
                                         <label className="form-field__label"
                                                 htmlFor="from">Откуда</label>
-                                        <Autocomplete
+                                        <Autocomplete className="listIndex"
                                             inputProps={{ style: autoCompleteStyle }}
                                             items={this.state.cityList}
                                             shouldItemRender={(item, value) => item.nameCity.toLowerCase().indexOf(value.toLowerCase()) > -1}
@@ -378,7 +698,7 @@ class Finder extends React.Component{
                                             renderItem={(item, highlighted) =>
                                                 <div
                                                     key={item.idCity}
-                                                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
+                                                    style={{ zIndex: '999000000000000000000000000000', backgroundColor: highlighted ? '#eee' : 'transparent'}}
                                                 >
                                                     {item.nameCity}
                                                 </div>
@@ -421,7 +741,7 @@ class Finder extends React.Component{
                         <div className="">
                             <div style={{position:'relative'}}>
                                 <div>
-                                    <div className="form-field form-field--has-value">
+                                    <div className="form-field form-field--has-value" style={{zIndex: '490'}}>
                                         <label className="form-field__label"
                                                htmlFor="to">Куда</label>
                                         <Autocomplete
@@ -472,7 +792,7 @@ class Finder extends React.Component{
                         <span>
                             <span className="Styled__CalendarIcon-sc-1vjhvhi-1 cxBPDZ">
                                 <div
-                                className="form-field form-field--has-value form-field--datepicker">
+                                className="form-field form-field--has-value form-field--datepicker" style={{zIndex: '450'}}>
                                     <label
                                         className="form-field__label"
                                         htmlFor="on">
@@ -505,7 +825,7 @@ class Finder extends React.Component{
                     <div className="search-form__group search-form__group--passengers search-form__group--white">
                         <div className="" style={{position:'relative'}}>
                             <div className="form-group">
-                                <div className="form-field form-field--has-value form-control-lg select ">
+                                <div className="form-field form-field--has-value form-control-lg select " style={{zIndex: '440'}}>
                                     <label className="form-field__label"
                                            htmlFor="passengers">
                                         Пассажиры
@@ -515,15 +835,18 @@ class Finder extends React.Component{
                                     type="text"
                                     id="passengers"
                                     name="passengers"
-                                    defaultValue={this.state.passengers}
-                                    onChange={this.handleChange} />
+                                    value={this.state.passengers} />
+                                    <button className="classPlus" type="button" onClick={this.passInp.bind(this, +1)}>+</button>
+                                    <button className="classMinus" type="button" onClick={this.passInp.bind(this, -1)}>-</button>
                                     <span className="icon icon-info"></span>
                                     <p className="form-field__error"></p>
                                 </div>
+
                                 <label className="mobile-search__form-addon"
                                        htmlFor="passengers">
                                     <span className="icon icon-passanger-red text-primary"></span>
                                 </label>
+
                             </div>
                         </div>
                     </div>
@@ -538,15 +861,31 @@ class Finder extends React.Component{
                     </div>
                 </div>
                 </div>
-                    <div className="blockCalender" style={{display: this.state.visibleCalendar}}>
-                        <div className="calendar__prev">
+                    <div>{
+                        this.state.loadingTwo?
+                            <div className="mainImgLoad">
+                                <div className="imgLoad"></div>
+                            </div>
+                            : null
+                    }
+                    </div>
+                    <div className='mainBlockError'>
+                        { this.state.resErrorRace ?
+                            <p className="errorSend"> к сожалению по вашему запросу не найдено рейсов в назначеную дату</p>
+                            :
+                            null
+                        }
+                    </div>
+                    {/*<div className="blockCalender" style={{display: this.state.visibleCalendar}}>*/}
+                    <div className="blockCalender"  style={{display: this.state.blockShow}}>
+
+                    <div className="calendar__prev" style={{display: this.state.visibleCalendar}} >
                         </div>
                         {/*календарь*/}
                         { this.state.dataCalendar.map((dateCalendar, key) =>
                                 <div key={key} onClick={() => this.testFunction(dateCalendar)}>
-                                <p>{console.log(dateCalendar)}</p>
                                 <div className="calendar__item calendar__key3 styleForDays"  >
-                                    <p >
+                                    <p>
                                         <Moment format="D MMM" withTitle>
                                             {dateCalendar}
                                         </Moment><br/>
@@ -557,65 +896,24 @@ class Finder extends React.Component{
                             </div>
 
                         )}
-                        <div className="calendar__next">
+                        <div className="calendar__next" style={{display: this.state.visibleCalendar}}>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    {/*//новый блок для вывода*/}
-                    <div className="showBlock" style={{display: 'none'}}>
-                        <div className='upShowBlock'>
-                            <div className='oneGridForShow'>
-                                 <div className='upOneGridForShow'>
-                                        <p className="timeShow">18:00</p>
-                                     <div className="dataShow">22 нояб.</div>
-                                     <div className="timeInRoad">5 ч. 30 мин. в пути</div>
-                                 </div>
-                                <div className='upTwoGridForShow'>
-                                    <p className="cityName">Киев</p>
-                                    <br/>
-                                    <p>Автовокзал "Центральный", метро Демеевская; проспект Науки; дом 1/2</p>
-                                </div>
-                            </div>
-                            <div className='twoGridForShow'>
-                                <div className='upOneGridForShow'>
-                                    <p className="timeShow">18:00</p>
-                                    <div className="dataShow">22 нояб.</div>
-                                </div>
-                                <div className='upTwoGridForShow'>
-                                    <p className="cityName">Киев</p>
-                                    <br/>
-                                    <p>Автовокзал "Центральный", метро Демеевская; проспект Науки; дом 1/2</p>
-                                </div>
-                            </div>
-                            <div className='threeGridForShow'>
-                                <div className='leftShowBlock'>
-                                    <p className='textPrice' style={{float: 'right'}}>359 грн</p>
-                                </div>
-                                <div className='rightShowBlock'>
-                                    <button className="butTic">Выбрать</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='botShowBlock'>
-
-                        </div>
-
-                    </div>
-                    {/*end new show*/}
-                    <div className="fixCalendar">
+                <div style={{display: this.state.blockShow}}>
+                    <div className="fixCalendar" style={{display: this.state.blockShow}}>
 
                     </div>
 
-                    { this.state.tripList.map(list =>
+                    { this.state.tripList.map((list, key) =>
 
 
 
 
-                        <div key={list.tripId} className="blockShow" >
+                        <div key={key} className="blockShow" >
                             {/*//новый блок для вывода*/}
-                            <div className="showBlock" style={{display: 'block'}}>
+                            <div className="showBlock" style={{display: this.state.blockShow}}>
                                 <div className='upShowBlock'>
                                     <div className='oneGridForShow'>
                                         <div className='upOneGridForShow'>
@@ -657,20 +955,20 @@ class Finder extends React.Component{
                                             <p className='textPrice' style={{float: 'right'}}>{list.price} {list.currName}</p>
                                         </div>
                                         <div className='rightShowBlock'>
-                                            <button className="butTic">Выбрать</button>
+                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName)}>Выбрать</button>
                                             <br/>
-                                            <p style={{color: 'red'}}>{list.backPlaces} мест</p>
+                                            <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className='botShowBlock'>
-                                    <div className="col-md-2"><p className="trip__details__down" onClick={() => this.infoBlock()} style={{color: 'red'}}>Детали рейса</p></div>
-                                    <p>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
+                                    <div className="col-md-2"><p className="trip__details__down" onClick={this.infoBlock(key)} style={{color: 'red'}}>Детали рейса</p></div>
+                                    <p style={{paddingBottom: "10px"}}>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
                                 </div>
 
                             </div>
-                            {this.state.showMe ?
-                                <div className="detailsShow">
+                            {list.showDateil ?
+                                <div  className="detailsShow">
                                     <div className="col flex">
                                         <div><p>Отправление<br/>(местное время)</p></div>
                                         <div>
@@ -827,8 +1125,10 @@ class Finder extends React.Component{
                 </div>
                 {/*блок авторизации и входа линый кабинет*/}
 
-
-                <div className="cabin" style={{display: 'none'}}>
+                <div className="topFix">
+                    <button style={{display: this.state.showByTic}} onClick={this.backStup}>назад</button>
+                </div>
+                <div className="cabin" style={{display: this.state.showByTic}}>
                     <div className="checkout col-md-8">
                         <div className="m-verify-panel__item checkout-panel">
                             <div className="row-slim m-verify-panel__item-row">
@@ -843,11 +1143,12 @@ class Finder extends React.Component{
                                             <div className="form-group has-error">
                                                 <div className="">
                                                     <div>
-                                                        <div><input
-                                                            id="checkout_passenger1_1021051141151169511097109101"
+                                                        <div>
+                                                            <input
+                                                                name="nameS"
                                                             type="text" className="form-control" placeholder="Иван"
-                                                            autoCapitalize="true" autoCorrect="off" label="Имя"
-                                                            autoComplete="okhNAKKh" name="okhNAKKh_"  /></div>
+                                                            label="Имя" value={this.state.nameS} onChange={this.nameS}/>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <label className="error control-label"
@@ -863,6 +1164,7 @@ class Finder extends React.Component{
                                                         <div><input id="checkout_passenger1_108971151169511097109101"
                                                                     type="text" className="form-control"
                                                                     placeholder="Иванов" autoCapitalize="true"
+                                                                    value={this.state.surnameS} onChange={this.surnameS}
                                                                     autoCorrect="off" label="Фамилия"
                                                                     autoComplete="xRfb0tATz" name="xRfb0tATz_"  />
                                                         </div>
@@ -883,7 +1185,9 @@ class Finder extends React.Component{
                                                     <div className="verify-panel__picker-btn disabled">
                                                         <button type="button" className="btn free" tabIndex="-1">
                                                             <span><i className="icon icon-seat-v2"></i></span><span
-                                                            className="verify-panel__picker-description">Свободная рассадка</span>
+                                                            className="verify-panel__picker-description">
+                                                            <p>количество мест: {this.state.passengers} </p>
+                                                        </span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -904,6 +1208,7 @@ class Finder extends React.Component{
                                     <div className="form-group"><input id="checkout_email" type="email"
                                                                        className="form-control"
                                                                        placeholder="ashevchenko@gmail.com"
+                                                                       value={this.state.emailS} onChange={this.emailS}
                                                                        label="E-mail" autoCorrect="off"
                                                                        autoCapitalize="false" autoComplete="on" name=""
                                                                         /></div>
@@ -912,6 +1217,7 @@ class Finder extends React.Component{
                                     className="m-verify-panel__form-label" htmlFor="checkout_phone">Телефон</label>
                                     <div className="form-group">
                                         <div><input id="checkout_phone" name="phone" type="tel" maxLength="17"
+                                                    value={this.state.phoneS} onChange={this.phoneS}
                                                     autoComplete="on" label="Телефон" placeholder="380 __ ___ ____"
                                                     className="auth__input"  /><span
                                             className="auth__plus text-muted" > </span>
@@ -919,22 +1225,22 @@ class Finder extends React.Component{
                                     </div>
                                 </div>
                             </div>
-                            <div className="checkout__customer-promo checkout__custom-checkbox">
-                                <div className="subscribe--new flat__form">
-                                    <div className="checkbox checkbox-primary verify-panel__checkbox"><input
-                                        type="checkbox" id="checkbox-921efd1cacaca" /><label
-                                        htmlFor="checkbox-921efd1cacaca"><i className="verify-panel__checkbox-icon"></i><span>Отправьте мне <span
-                                        data-type="cashback" className="cashback interactive-link text-primary">кешбек 3%</span> за этот заказ</span></label>
-                                    </div>
-                                </div>
-                                <span>У меня есть промокод</span></div>
+
+                        </div>
+                        <div className="checkout-panel checkout__customer"><p
+                            className="checkout__customer-title">Информация о рейсе</p><p
+                            className="checkout__customer-text">
+                            рейс: {this.state.tripInfForBy} <br/>
+                            отправление: {this.state.stDepAddrInfForBy}  <br/>
+                            {this.state.DepInfForBy} <br/>
+                            отправление: {this.state.stArrNameInfForBy}  <br/>
+                            {this.state.ArrInfForBy}
+                        </p>
+
+
                         </div>
                         <div className="checkout-panel checkout__payment">
-                            <div className="checkout__payment-header"><span>К оплате</span><span><div
-                                className="text-center"><span className="price"><span
-                                className="price__ammount">330<span className="price__fraction">,00 <span
-                                className="Currency__StyledCurrency-sc-1jdgn94-0 dlqcdB currency">грн</span></span></span></span></div></span>
-                            </div>
+                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy}</div>
                             <div className="checkout__payment-info">
                                 <div className="checkout__payment-info-text">Ваши платежные и личные данные надежно
                                     защищены в соответствии с международными стандартами безопасности.
@@ -945,31 +1251,14 @@ class Finder extends React.Component{
                                     <div className="filling-info__pay-item filling-info__pay-visa"></div>
                                 </div>
                             </div>
-                            <div className="checkout__agreement checkout__custom-checkbox flat__form">
-                                <div className="m-verify-panel__policy">
-                                    <div className="checkbox checkbox-primary verify-panel__checkbox"><input
-                                        type="checkbox" id="checkbox-df0dacb38e2f7" /><label
-                                        htmlFor="checkbox-df0dacb38e2f7"><i className="verify-panel__checkbox-icon"></i><span>Я принимаю условия <span
-                                        data-type="agreement"
-                                        className="interactive-link text-primary">публичной оферты</span>, <span
-                                        data-type="privacyPolicy" className="interactive-link text-primary">политики конфиденциальности</span> и <span
-                                        data-type="refundPolicy"
-                                        className="interactive-link text-primary">возврата</span>.</span></label></div>
-                                </div>
-                                <div className="m-verify-panel__policy">
-                                    <div className="checkbox checkbox-primary verify-panel__checkbox"><input
-                                        type="checkbox" id="checkbox-d370473cc6605" /><label
-                                        htmlFor="checkbox-d370473cc6605"><i className="verify-panel__checkbox-icon"></i><span>Я даю <span
-                                        data-type="dataProcessingAgreement" className="interactive-link text-primary">согласие на обработку персональных данных</span>.</span></label>
-                                    </div>
-                                </div>
-                            </div>
+
+
                         </div>
                         <div className="checkout-submit-btn">
                             <div>
-                                <button type="submit" id="checkout_submit"
-                                        className="btn btn-primary btn-sm btn-block disabled btn--checkout"
-                                        data-uikitid="button.827246539605">Продолжить
+                                <button type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
+                                        onClick={() => this.PayArr(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
+                                    Продолжить
                                 </button>
                             </div>
                         </div>
@@ -977,63 +1266,13 @@ class Finder extends React.Component{
                             личные данные надежно защищены.</p></div>
                     </div>
                 </div>
-            {/* форма реестрации*/}
-            <div className="blockSign" style={{display: 'block'}}>
-                <div >
-                    <div >
-                        <div >
-                            <div >
-                                <h3 onClick={()=>this.signFunction()}>Уже зарегистрированы? Войти</h3>
-                                        <div style={{display: this.state.showSign ? 'block' : 'none' }}>
-                                            <div>
-                                                    <br/>
-                                                    <p>login</p>
-                                                    <input type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
-                                                {/*<p style={{display: this.state.displayLogin, color:'red'}}>error login</p>*/}
-                                                    <br/>
-                                                    <p>password</p>
-                                                    <input type="text" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
-
-
-                                                    <p onClick={this.subDataForAuth}>авторизироватся</p>
-                                            </div>
-                                        </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div><span>или</span></div>
-                    <div >
-                            <div >
-                                <h3 onClick={()=>this.regFunction()}>Нет аккаунта? Зарегистрироваться</h3>
-                                <div  style={{display: this.state.showReg ? 'block' : 'none' }}>
-                                    <br/><p>login</p>
-                                    <input type="text" className={this.state.errorLogin} name="login" value={this.state.login} onChange={this.handleChange}/>
-                                    <p className={this.state.erLogin}>error login</p>
-                                    <br/><p>password</p>
-                                    <input type="text" name="password" value={this.state.password} onChange={this.handleChange}/>
-                                    <p className={this.state.erPassword}>password error</p>
-                                    <br/><p>surname</p>
-                                    <input type="text" name="surname" value={this.state.surname} onChange={this.handleChange}/>
-                                    <p className={this.state.erSurname}>Фамилия введена не корректно</p>
-                                    <br/><p>name</p>
-                                    <input type="text" name="nameTest" value={this.state.nameTest} onChange={this.handleChange}/>
-                                    <p className={this.state.erName}>Введите имя коректно</p>
-                                    <br/><p>email</p>
-                                    <input type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-                                    <p className={this.state.erEmail}>Введите емеил коректно</p>
-                                    <br/><p>phone</p>
-                                    <input type="text" name="phone" value={this.state.phone} onChange={this.handleChange}/>
-                                    <p className={this.state.erPhone}>Введите мобильный номер корректно</p>
-
-                                    {/*<input type="text" value={this.state.login} onChange={(event)=>this.DataForReg(event) => {}} />*/}
-                                    <p onClick={this.subDataForReg}>регистрация</p>
-                                </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+                <React.Fragment>
+                    {/*<Finder />*/}
+                    <Lines customLoading={this.state.loading} />
+                </React.Fragment>
             </div>
+
         )
     }
 }
