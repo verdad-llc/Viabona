@@ -55,6 +55,8 @@ class Finder extends React.Component{
             passengers : '1',
             cityList: [],
             tripList: [],
+            tripId: '',
+            raceId: '',
             dataCalendar: [],
             //data for register
             login: "",
@@ -98,6 +100,8 @@ class Finder extends React.Component{
             showBuyNext: true,
             inflengPass: [],
             arrForOctobBy: [],
+            nameUse2: [],
+            userAr: [],
 
 
 
@@ -110,7 +114,6 @@ class Finder extends React.Component{
         this.handleDirectChange = this.handleDirectChange.bind(this);
         this.handleGoBackChange = this.handleGoBackChange.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
-        //this.handClickTest = this.handClickTest.bind(this);
         this.testFunction  = this.testFunction.bind(this);
         this.signFunction = this.signFunction.bind(this);
         this.regFunction  = this.regFunction.bind(this);
@@ -130,8 +133,7 @@ class Finder extends React.Component{
         this.backStup =  this.backStup.bind(this);
         this.PayArr = this.PayArr.bind(this);
         this.loadin = this.loadin.bind(this);
-        // this.manageDay = this.manageDay.bind(this);
-        //this.handleSelectTrip = this.handleSelectTrip.bind(this);
+        this.pushArrUs = this.pushArrUs.bind(this);
 
     }
     PayArr(name, surname, email, phone) {
@@ -147,10 +149,11 @@ class Finder extends React.Component{
             infForLiq1.arrTic = this.state.arrTic;
             //массив для покупки в переменной arrTic
         let inflengPass = this.state.inflengPass;
-
+       // this.pushArrUs();
+        console.log(this.state.tripId, this.state.raceId);
 
         console.log(this.state.infForLiq, this.state.lengPass);
-        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname).then(res => {
+        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname + '&id=' + this.state.tripId + '&raceId' + this.state.raceId).then(res => {
             console.log(res.data);
             this.setState({
                 showButPayTic: true,
@@ -162,10 +165,10 @@ class Finder extends React.Component{
             // window.location.href = 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.arrTic.price + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname;
         });
         ///формирование массива для передачи на октобус
-        axios.get('http://new.viabona.com.ua/api/index.php/api/buy_get?id=' +  + '&places=' +  + '&buyerid=' + + '&buyid=' + + '&reserve=' ).then(res => {
-            console.log(res.data);
-            })
-
+        // axios.get('http://new.viabona.com.ua/api/index.php/api/buy_get?id=' +  + '&places=' +  + '&buyerid=' + + '&buyid=' + + '&reserve=' ).then(res => {
+        //     console.log(res.data);
+        //     })
+        //
 
 
         /////////
@@ -178,7 +181,7 @@ class Finder extends React.Component{
             blockShow: 'block'
         })
     }
-    showByTic(price, currency, trip, dtArr, stArrName, dtDep, stDepAddr, pass, currName){
+    showByTic(price, currency, trip, dtArr, stArrName, dtDep, stDepAddr, pass, currName, raceId, tripId){
         this.setState({
             showByTic: 'block',
             blockShow: 'none'
@@ -193,6 +196,9 @@ class Finder extends React.Component{
         arrUser.stDepAddr = stDepAddr;
         arrUser.passengers = pass;
         arrUser.currName = currName;
+        arrUser.raceId = raceId;
+        arrUser.tpripId = tripId;
+        arrUser.raceId = raceId;
         this.setState({
             priceBy: price * pass,
             currNameBy: currName,
@@ -200,28 +206,45 @@ class Finder extends React.Component{
             stDepAddrInfForBy: stDepAddr,
             stArrNameInfForBy: stArrName,
             DepInfForBy: dtDep,
-            ArrInfForBy: dtArr
+            ArrInfForBy: dtArr,
+            tripId: tripId,
+            raceId: raceId
 
         });
         let lengPass = this.state.lengPass;
+        let userAr = [];
         for (let i = 1; i < this.state.passengers; i++) {
+            let kkey = i+1;
+            userAr.push({'nameS':'', kkey:i});
             let name = [];
             let surname = [];
             lengPass[i+1] = [];
         }
+        this.setState({userAr:userAr});
+        //infoBlock = id => e => {
+            //     console.log(id);
+            //     console.log(e.target.value);
+            //     let _InviteList = this.state.tripList;
+            //     _InviteList[id].showDateil = !_InviteList[id].showDateil;
+            //     this.setState({tripList : _InviteList});
+            // };
+
+        //
+
+
+
         console.log(lengPass);
 
 
-        // this.setState({
-        //     arrTic: arrUser,
-        // })
-        // arrUser.name = this.state.nameS;
-        // arrUser.surname = this.state.surnameS;
-        // arrUser.email = this.state.emailS;
-        // arrUser.phone = this.state.phoneS;
-
 
         console.log(this.state.arrTic);
+    }
+    pushArrUs = id=> e => {
+        console.log(id);
+        console.log(this.state.userAr);
+        let userAr = this.state.userAr;
+         userAr[id].nameS = e.target.value;
+        this.setState({userAr :userAr});
     }
     nameS(el){
             this.setState({nameS: el.target.value});
@@ -258,15 +281,7 @@ class Finder extends React.Component{
             temp_pas = 1;
         }
         this.setState({passengers: temp_pas});
-        // if(this.state.passengers > 1) {
-        //     this.setState({
-        //         passengers: this.state.passengers + data,
-        //     })
-        // } else {
-        //     this.setState({
-        //         passengers: '1',
-        //     })
-        // }
+
 
 
 
@@ -390,7 +405,6 @@ class Finder extends React.Component{
             this.setState({
                 sessionUserActiv : res.data
             });
-            // console.log(this.state.sessionUserActiv.name)
         });
     }
     dataSessionUser(){
@@ -424,7 +438,7 @@ class Finder extends React.Component{
     }
 
 
-    handleReverseCities(){
+    handleReverseCities() {
         let _from = this.state.from;
         let _to = this.state.to;
         let _fromID = this.state.fromID;
@@ -437,7 +451,7 @@ class Finder extends React.Component{
         });
     }
 
-    componentDidMount(){
+    componentDidMount() {
 
 
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getCityList').then(res => {
@@ -502,7 +516,10 @@ class Finder extends React.Component{
 
             if (!res.data.error){
                 this.setState({visibleCalendar : 'block'});
-                this.setState({ tripList : res.data});
+                this.setState({
+                    tripList : res.data,
+                    tripId : res.data[0].tripId,
+                });
                 let dataCalendarTest = res.data[0].dtArr;
                 console.log(dataCalendarTest);
                 let arrActive = res.data[0].trip_stop.forward[0].depDates;
@@ -529,24 +546,9 @@ class Finder extends React.Component{
                         let dayCall = Calendar.getDay();
 
                         arrAll.getDay();
-                        //this.moment().format("YYYY/MM/DD");
 
                         allDay.push(dayCall);
-                      //  if();
 
-                        // if(arrAll) {
-                        //
-                        // }
-
-
-                        // let result = new Date(dataTwoTest);
-                        // //activeDate = new Date(arrActive[i]);
-                        // arrDate.push(new Date(result.getTime() + ((i - 3) * 86400000)));
-                        // console.log(arrDate)
-                        // //     if (allDate == activeDate) {
-                        // //         arrDate.push({'date': allDate, 'active': 1});}
-                        // // {
-                        // //     arrDate.push({'date': allDate, 'active': 0});}
                     }
                 };
                 funcDate(dataCalendarTest);
@@ -579,7 +581,7 @@ class Finder extends React.Component{
                 this.setState({loadingTwo: false});
             }
                 .bind(this),
-            5000
+            4500
         );
 
     }
@@ -591,19 +593,13 @@ class Finder extends React.Component{
     displayCalendar(){
         this.setState({displayCalendar : 'block'});
     }
-    // infoBlock()
-    // {
-    //   this.setState({
-    //       showMe: !this.state.showMe
-    //   })
-    // }
     infoBlock = id => e => {
         console.log(id);
         console.log(e.target.value);
         let _InviteList = this.state.tripList;
         _InviteList[id].showDateil = !_InviteList[id].showDateil;
         this.setState({tripList : _InviteList});
-    }
+    };
 
     render() {
         const autoCompleteStyle = {padding: '26px 30px 10px 12px',
@@ -643,13 +639,6 @@ class Finder extends React.Component{
                         <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Войти/зарегестрироватся</p></div>}
                 </div>
 
-                {/*<p>{this.dataSessionUser()}</p>*/}
-
-            {/*    {*/}
-            {/*    this.state.sessionUserActiv.map(function(item, i){*/}
-            {/*    console.log('test');*/}
-            {/*})}*/}
-
                 {/* форма реестрации*/}
                 <div className="blockSign" style={{display: this.state.showBlockNone ? 'block' : 'none'}}>
                     <div >
@@ -661,16 +650,12 @@ class Finder extends React.Component{
                                         <div className="showSignBlock">
                                             <p className="styleTextUser">Логин</p>
                                             <input className="inputUser" type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
-                                            {/*<p style={{display: this.state.displayLogin, color:'red'}}>error login</p>*/}
-
                                             <p className="styleTextUser">Пароль</p>
                                             <input className="inputUser" type="password" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
                                             <p className={this.state.erAuth}>Логин или пароль введены не верно</p>
-
                                             <p  className="styleTextUserSend" onClick={this.subDataForAuth}>авторизироватся</p>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -707,7 +692,6 @@ class Finder extends React.Component{
                                         </div>
                                     </div>
                                 <div className="classForButSendReg">
-                                    {/*<input type="text" value={this.state.login} onChange={(event)=>this.DataForReg(event) => {}} />*/}
                                     <p className="styleTextUserSendReg" onClick={this.subDataForReg}>регистрация</p>
                                 </div>
                                 </div>
@@ -995,7 +979,7 @@ class Finder extends React.Component{
                                             <p className='textPrice' style={{float: 'right'}}>{list.price} {list.currName}</p>
                                         </div>
                                         <div className='rightShowBlock'>
-                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName)}>Выбрать</button>
+                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button>
                                             <br/>
                                             <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
                                         </div>
@@ -1158,9 +1142,10 @@ class Finder extends React.Component{
                             </div>
 
                         </div>
-                        {this.state.lengPass.map((list, key) =>
+                        {this.state.userAr.map((list, key) =>
+
                             <div key={key} className="checkout-panel checkout__customer"><p
-                                className="checkout__customer-title">Информация о пассажире {key}</p>
+                                className="checkout__customer-title">Информация о пассажире {list.key}</p>
                                 <div className="checkout__customer-form">
                                     <div className="col-md-6 col-sm-6 col-xs-6"><label
                                         className="m-verify-panel__form-label"
@@ -1170,9 +1155,12 @@ class Finder extends React.Component{
                                                 <div>
                                                     <div>
                                                         <input
-                                                            name="nameS"
+                                                            name="nameS[]"
                                                             type="text" className="form-control" placeholder="Иван"
-                                                            label="Имя" />
+                                                            label="Имя"
+                                                            value={list.nameS}
+                                                            onChange={this.pushArrUs(key)}  />
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -1267,7 +1255,6 @@ class Finder extends React.Component{
                 </div>
             </div>
                 <React.Fragment>
-                    {/*<Finder />*/}
                     <Lines customLoading={this.state.loading} />
                 </React.Fragment>
             </div>
