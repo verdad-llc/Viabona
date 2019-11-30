@@ -92,6 +92,12 @@ class Finder extends React.Component{
             stArrNameInfForBy: '',
             DepInfForBy: '',
             ArrInfForBy: '',
+            lengPass: [],
+            butPayTic: "",
+            showButPayTic: false,
+            showBuyNext: true,
+            inflengPass: [],
+            arrForOctobBy: [],
 
 
 
@@ -129,6 +135,7 @@ class Finder extends React.Component{
 
     }
     PayArr(name, surname, email, phone) {
+
         let arrBy = this.state.arrBy;
         arrBy.name = name;
         arrBy.surname = surname;
@@ -138,7 +145,32 @@ class Finder extends React.Component{
             let infForLiq1 = this.state.infForLiq;
             infForLiq1.arrBy = arrBy;
             infForLiq1.arrTic = this.state.arrTic;
-        console.log(this.state.infForLiq);
+            //массив для покупки в переменной arrTic
+        let inflengPass = this.state.inflengPass;
+
+
+        console.log(this.state.infForLiq, this.state.lengPass);
+        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname).then(res => {
+            console.log(res.data);
+            this.setState({
+                showButPayTic: true,
+                butPayTic: res.data,
+                showBuyNext: false
+
+            })
+
+            // window.location.href = 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.arrTic.price + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname;
+        });
+        ///формирование массива для передачи на октобус
+        axios.get('http://new.viabona.com.ua/api/index.php/api/buy_get?id=' +  + '&places=' +  + '&buyerid=' + + '&buyid=' + + '&reserve=' ).then(res => {
+            console.log(res.data);
+            })
+
+
+
+        /////////
+
+         // window.location.href = 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.arrTic.price + '&currency=' + this.state.arrTic.currency +'&description=' + name + surname;
     }
     backStup(){
         this.setState({
@@ -170,7 +202,15 @@ class Finder extends React.Component{
             DepInfForBy: dtDep,
             ArrInfForBy: dtArr
 
-        })
+        });
+        let lengPass = this.state.lengPass;
+        for (let i = 1; i < this.state.passengers; i++) {
+            let name = [];
+            let surname = [];
+            lengPass[i+1] = [];
+        }
+        console.log(lengPass);
+
 
         // this.setState({
         //     arrTic: arrUser,
@@ -1011,115 +1051,6 @@ class Finder extends React.Component{
                                 null
                             }
                             {/*end new show*/}
-                            {/*<div className="trip-container">*/}
-                            {/*    <div className="results__trip">*/}
-                            {/*        <div className="row">*/}
-                            {/*            <div className="col-md-3 col-xs-12 positionDeparture">*/}
-                            {/*                <div className="col-md-12 col-xs-4">*/}
-                            {/*                    <div className="trip__time trip__time__departure"><span*/}
-                            {/*                        className="trip-departure-datetime show-desktop">{list.dtDep}*/}
-                            {/*                        {console.log(list.trip_stop.forward[0].route[0].city)}*/}
-
-                            {/*                    </span><span*/}
-                            {/*                        className="trip-departure-time show-mobile">09:00</span><span*/}
-                            {/*                        className="trip-departure-date show-mobile">Пн, 18 ноября</span></div>*/}
-                            {/*                </div>*/}
-                            {/*                <div className="col-md-12 col-xs-8"><p*/}
-                            {/*                    className="trip__station trip__station__departure">{list.stDepName},<br/>{list.stDepAddr}*/}
-                            {/*                </p></div>*/}
-                            {/*            </div>*/}
-                            {/*            <div className="col-md-2 col-xs-12">*/}
-                            {/*                <div className="col-md-12 col-xs-4 trip-arrow-div"><p*/}
-                            {/*                    className="trip__arrow-one showmobileb"></p><p*/}
-                            {/*                    className="trip__duration showdesktopb upShow">{list.wayTimeH}ч {list.wayTimeM}мин</p></div>*/}
-                            {/*                <div className="col-md-12 col-xs-8 trip-duration-div "><p*/}
-                            {/*                    className="trip__arrow-one showdesktopib"></p><p*/}
-                            {/*                    className="trip__change showdesktopb">прямой рейс</p><p*/}
-                            {/*                    className="trip__duration showmobileib">16ч 50мин</p><p*/}
-                            {/*                    className="trip__change showmobileib">прямой рейс</p></div>*/}
-                            {/*            </div>*/}
-                            {/*            <div className="col-md-3 col-xs-12">*/}
-                            {/*                <div className="col-md-12 col-xs-4 upMarg">*/}
-                            {/*                    <div className="trip__time trip__time__arrived"><span*/}
-                            {/*                        className="trip-arrived-datetime show-desktop upShow ">{list.dtArr}</span></div>*/}
-                            {/*                </div>*/}
-                            {/*                <div className="col-md-12 col-xs-8"><p*/}
-                            {/*                    className="trip__station  trip__station__arrived">{list.stArrName},<br/>{list.stArrAddr}*/}
-                            {/*                </p></div>*/}
-                            {/*            </div>*/}
-                            {/*            <div className="col-md-2 col-xs-12">*/}
-                            {/*                <div className="col-md-12 col-xs-4"></div>*/}
-                            {/*                <div className="col-md-12 col-xs-8 upMarg">*/}
-                            {/*                    <div><p className="sitlabel upShow">свободных мест: </p>*/}
-                            {/*                        <p*/}
-                            {/*                            className="trip__places">{list.places}</p></div>*/}
-                            {/*                </div>*/}
-                            {/*            </div>*/}
-                            {/*            <div className="col-md-2 col-xs-12">*/}
-                            {/*                <div className="col-md-6 col-xs-4 col-price upMarg">*/}
-                            {/*                    <div className="priceClass-3"><p*/}
-                            {/*                        className="trip__price-lonely desktop-text-center colorMoney">{list.price}<span*/}
-                            {/*                        className="currency">₴</span></p></div>*/}
-                            {/*                </div>*/}
-                            {/*                <div className="col-md-6 col-xs-8 col-discount"></div>*/}
-                            {/*            </div>*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="row results__trip second-row">*/}
-                            {/*        <div className="col-md-8"><p className="trip__owner">Перевозчик: {list.carrier}</p></div>*/}
-                            {/*        <div className="col-md-2"><p className="trip__details__down" onClick={() => this.infoBlock()} >Подробно</p></div>*/}
-                            {/*        <div className="col-md-2">*/}
-                            {/*            <div className="blockGreen">*/}
-                            {/*                <a className="btnGreen" >*/}
-                            {/*                    <span className="butSelect">выбрать</span>*/}
-                            {/*                </a>*/}
-                            {/*            </div>*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*    {this.state.showMe ?*/}
-                            {/*        <div className="detailsShow">*/}
-                            {/*            <div className="col flex">*/}
-                            {/*                <div><p>Отправление<br/>(местное время)</p></div>*/}
-                            {/*                <div>*/}
-                            {/*                    {*/}
-                            {/*                        list.trip_stop.forward.map((el, i) => {*/}
-                            {/*                            console.log(el.route[0].city);*/}
-                            {/*                            el.route.map((listen, ii) => {*/}
-                            {/*                                console.log(listen.city);*/}
-                            {/*                                pushme.push(listen);*/}
-                            {/*                            })*/}
-                            {/*                        })*/}
-
-                            {/*                    }*/}
-                            {/*                    <p>Рейс: Киев АС(Ж\д вок.)-Познань АВ</p>*/}
-                            {/*                    {pushme.map((el, kkey) => {*/}
-                            {/*                            if (el.city !== "") {*/}
-                            {/*                                return (<div className="stationBlock" key={kkey}>*/}
-                            {/*                                    <div className="imgBlock">*/}
-                            {/*                                        <div className="imgClass">*/}
-                            {/*                                        </div>*/}
-                            {/*                                        <div className="imgClassBot">*/}
-
-                            {/*                                        </div>*/}
-
-                            {/*                                    </div>*/}
-                            {/*                                    <div>*/}
-                            {/*                                        <p className="nameCityStation"> {el.city} </p>*/}
-                            {/*                                        <span style={{}}></span>*/}
-                            {/*                                        <p className="botStation"> {el.timeDep} </p>*/}
-                            {/*                                        <span className="botStation"></span>*/}
-                            {/*                                    </div>*/}
-                            {/*                                </div>)*/}
-                            {/*                            }*/}
-                            {/*                        }*/}
-                            {/*                    )}*/}
-                            {/*                </div>*/}
-                            {/*            </div>*/}
-                            {/*        </div>*/}
-                            {/*        :*/}
-                            {/*        null*/}
-                            {/*    }*/}
-                            {/*</div>*/}
                         </div>
                     )}
                 </div>
@@ -1227,6 +1158,61 @@ class Finder extends React.Component{
                             </div>
 
                         </div>
+                        {this.state.lengPass.map((list, key) =>
+                            <div key={key} className="checkout-panel checkout__customer"><p
+                                className="checkout__customer-title">Информация о пассажире {key}</p>
+                                <div className="checkout__customer-form">
+                                    <div className="col-md-6 col-sm-6 col-xs-6"><label
+                                        className="m-verify-panel__form-label"
+                                        htmlFor="checkout_passenger1_1021051141151169511097109101">Имя</label>
+                                        <div className="form-group has-error">
+                                            <div className="">
+                                                <div>
+                                                    <div>
+                                                        <input
+                                                            name="nameS"
+                                                            type="text" className="form-control" placeholder="Иван"
+                                                            label="Имя" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label className="error control-label"
+                                                   htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                                ваше имя</label></div>
+                                    </div>
+                                    <div className="col-md-6 col-sm-6 col-xs-6"><label
+                                        className="m-verify-panel__form-label"
+                                        htmlFor="checkout_passenger1_108971151169511097109101">Фамилия</label>
+                                        <div className="form-group">
+                                            <div className="">
+                                                <div>
+                                                    <div><input id="checkout_passenger1_108971151169511097109101"
+                                                                type="text" className="form-control"
+                                                                placeholder="Иванов" autoCapitalize="true"
+                                                                value="" onChange={this.surnameS}
+                                                                autoCorrect="off" label="Фамилия"
+                                                                autoComplete="xRfb0tATz" name="xRfb0tATz_"  />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-6 col-sm-6 col-xs-6"><label
+                                        className="m-verify-panel__form-label" htmlFor="checkout_phone">Телефон</label>
+                                        <div className="form-group">
+                                            <div><input id="checkout_phone" name="phone" type="tel" maxLength="17"
+                                                        value="" onChange={this.phoneS}
+                                                        autoComplete="on" label="Телефон" placeholder="380 __ ___ ____"
+                                                        className="auth__input"  /><span
+                                                className="auth__plus text-muted" > </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        )}
                         <div className="checkout-panel checkout__customer"><p
                             className="checkout__customer-title">Информация о рейсе</p><p
                             className="checkout__customer-text">
@@ -1255,12 +1241,25 @@ class Finder extends React.Component{
 
                         </div>
                         <div className="checkout-submit-btn">
-                            <div>
-                                <button type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
-                                        onClick={() => this.PayArr(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
-                                    Продолжить
-                                </button>
-                            </div>
+                            {
+                                this.state.showBuyNext ?
+                                    <button className="butTictwo" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
+                                            onClick={() => this.PayArr(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
+                                        Продолжить
+                                    </button>
+
+                                    :
+                                    null
+                            }
+
+
+                            {
+                                this.state.showButPayTic ?
+                                    <div dangerouslySetInnerHTML={{ __html: this.state.butPayTic }} />
+
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="checkout__security"><p className="checkout__security-text">Ваши платежные и
                             личные данные надежно защищены.</p></div>

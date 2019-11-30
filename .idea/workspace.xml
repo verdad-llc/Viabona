@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6c65944e-4a6e-476f-bfc5-02f2c6f2a1b3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Components/Finder.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Finder.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Styles/styleShowBlock.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/Styles/styleShowBlock.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Styles/teststyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/Styles/teststyle.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -117,7 +114,8 @@
       <workItem from="1574530436207" duration="40081000" />
       <workItem from="1574704383434" duration="5460000" />
       <workItem from="1574760516529" duration="19712000" />
-      <workItem from="1574838242995" duration="26781000" />
+      <workItem from="1574838242995" duration="26782000" />
+      <workItem from="1574925574929" duration="21347000" />
     </task>
     <servers />
   </component>
@@ -142,7 +140,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/Components/Finder.js</url>
-          <line>429</line>
+          <line>469</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
