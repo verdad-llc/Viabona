@@ -13,12 +13,11 @@ import MomentLocaleUtils, {
 } from 'react-day-picker/moment';
 import 'moment/locale/ru';
 
-import 'moment/min/moment-with-locales'
+//import 'moment/min/moment-with-locales'
 import axios from 'axios';
 import Autocomplete from 'react-autocomplete';
 import Switch from "react-switch";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import App from "../App";
 
 
 class Finder extends React.Component{
@@ -40,6 +39,7 @@ class Finder extends React.Component{
             erPhone:'errorPhoneNone',
             //end error
             toID : 1,
+            userID : 0,
             minusone : new Date(),
             value : '',
             testValue : '',
@@ -100,8 +100,15 @@ class Finder extends React.Component{
             showBuyNext: true,
             inflengPass: [],
             arrForOctobBy: [],
-            nameUse2: [],
             userAr: [],
+            nameSBlockClass: 'form-group',
+            surnameSBlockClass: 'form-group',
+            phoneSBlockClass: 'form-group',
+            emailsBlockClass: 'form-group',
+            nameSErrorBlock: 'none',
+            surnameSErrorBlock: 'none',
+            phoneSErrorBlock: 'none',
+            emailSErrorBlock: 'none',
 
 
 
@@ -110,11 +117,12 @@ class Finder extends React.Component{
         this.handleSubmit = this.handleSubmit.bind(this);
         this.displayCalendar = this.displayCalendar.bind(this);
         this.handleChangeDate = this.handleChangeDate.bind(this);
+        this.handleChangeDateArrow = this.handleChangeDateArrow.bind(this);
         this.handleReverseCities = this.handleReverseCities.bind(this);
         this.handleDirectChange = this.handleDirectChange.bind(this);
         this.handleGoBackChange = this.handleGoBackChange.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
-        this.testFunction  = this.testFunction.bind(this);
+        this.changeDateOnCalendar  = this.changeDateOnCalendar.bind(this);
         this.signFunction = this.signFunction.bind(this);
         this.regFunction  = this.regFunction.bind(this);
         this.subDataForReg = this.subDataForReg.bind(this);
@@ -133,11 +141,67 @@ class Finder extends React.Component{
         this.backStup =  this.backStup.bind(this);
         this.PayArr = this.PayArr.bind(this);
         this.loadin = this.loadin.bind(this);
-        this.pushArrUs = this.pushArrUs.bind(this);
+        this.pushnameS = this.pushnameS.bind(this);
+        this.pushphoneS = this.pushphoneS.bind(this);
+        this.pushsurnameS = this.pushsurnameS.bind(this);
 
     }
     PayArr(name, surname, email, phone) {
 
+        let we_can_go = true;
+        if(this.state.nameS == ''){
+            we_can_go = false;
+            this.setState({
+                nameSErrorBlock:'block',
+                nameSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.surnameS == ''){
+            we_can_go = false;
+            this.setState({
+                surnameSErrorBlock:'block',
+                surnameSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.emailS == ''){
+            we_can_go = false;
+            this.setState({
+                emailSErrorBlock:'block',
+                emailSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.phoneS == ''){
+            we_can_go = false;
+            this.setState({
+                phoneSErrorBlock:'block',
+                phoneSBlockClass: 'form-group has-error',
+            });
+        }
+        let _userAr = this.state.userAr;
+        for(let i=0; i < _userAr.length; i++){
+            if (_userAr[i].nameS == ''){
+                _userAr[i].blocknameS = 'form-group has-error';
+                _userAr[i].labelnameS = 'block';
+                we_can_go = false;
+            }
+            if (_userAr[i].surnameS == ''){
+                _userAr[i].blocksurnameS = 'form-group has-error';
+                _userAr[i].labelsurnameS = 'block';
+                we_can_go = false;
+            }
+            if (_userAr[i].phoneS == ''){
+                _userAr[i].blockphoneS = 'form-group has-error';
+                _userAr[i].labelphoneS = 'block';
+                we_can_go = false;
+            }
+        }
+        this.setState({
+            userAr: _userAr
+        });
+
+        if (!we_can_go){
+            return false;
+        }
         let arrBy = this.state.arrBy;
         arrBy.name = name;
         arrBy.surname = surname;
@@ -149,11 +213,16 @@ class Finder extends React.Component{
             infForLiq1.arrTic = this.state.arrTic;
             //массив для покупки в переменной arrTic
         let inflengPass = this.state.inflengPass;
-       // this.pushArrUs();
         console.log(this.state.tripId, this.state.raceId);
 
         console.log(this.state.infForLiq, this.state.lengPass);
-        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname + '&id=' + this.state.tripId + '&raceId' + this.state.raceId).then(res => {
+        axios({
+            method: 'post',
+            url: 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname + '&id=' + this.state.tripId + '&raceId' + this.state.raceId,
+            data: {
+                state: this.state
+            }
+        }).then(res => {
             console.log(res.data);
             this.setState({
                 showButPayTic: true,
@@ -162,18 +231,8 @@ class Finder extends React.Component{
 
             })
 
-            // window.location.href = 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.arrTic.price + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname;
         });
-        ///формирование массива для передачи на октобус
-        // axios.get('http://new.viabona.com.ua/api/index.php/api/buy_get?id=' +  + '&places=' +  + '&buyerid=' + + '&buyid=' + + '&reserve=' ).then(res => {
-        //     console.log(res.data);
-        //     })
-        //
 
-
-        /////////
-
-         // window.location.href = 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.arrTic.price + '&currency=' + this.state.arrTic.currency +'&description=' + name + surname;
     }
     backStup(){
         this.setState({
@@ -215,21 +274,10 @@ class Finder extends React.Component{
         let userAr = [];
         for (let i = 1; i < this.state.passengers; i++) {
             let kkey = i+1;
-            userAr.push({'nameS':'', kkey:i});
-            let name = [];
-            let surname = [];
-            lengPass[i+1] = [];
+            userAr.push({ 'nameS':'', 'kkey':kkey, 'surnameS' : '', 'phoneS' : '', 'blocknameS' : 'form-group', 'blocksurnameS' : 'form-group', 'blockphoneS' : 'form-group', 'labelnameS' : 'none', 'labelsurnameS' : 'none', 'labelphoneS' : 'none' });
         }
         this.setState({userAr:userAr});
-        //infoBlock = id => e => {
-            //     console.log(id);
-            //     console.log(e.target.value);
-            //     let _InviteList = this.state.tripList;
-            //     _InviteList[id].showDateil = !_InviteList[id].showDateil;
-            //     this.setState({tripList : _InviteList});
-            // };
 
-        //
 
 
 
@@ -239,11 +287,25 @@ class Finder extends React.Component{
 
         console.log(this.state.arrTic);
     }
-    pushArrUs = id=> e => {
+    pushnameS = id=> e => {
         console.log(id);
         console.log(this.state.userAr);
         let userAr = this.state.userAr;
          userAr[id].nameS = e.target.value;
+        this.setState({userAr :userAr});
+    }
+    pushphoneS = id=> e => {
+        console.log(id);
+        console.log(this.state.userAr);
+        let userAr = this.state.userAr;
+         userAr[id].phoneS = e.target.value;
+        this.setState({userAr :userAr});
+    }
+    pushsurnameS = id=> e => {
+        console.log(id);
+        console.log(this.state.userAr);
+        let userAr = this.state.userAr;
+         userAr[id].surnameS = e.target.value;
         this.setState({userAr :userAr});
     }
     nameS(el){
@@ -370,6 +432,7 @@ class Finder extends React.Component{
                     nameTest: res.data.name,
                     surname: res.data.surname,
                     email: res.data.email,
+                    userID: res.data.id,
                     phone: res.data.phone
                 })
                 console.log(this.state.email);
@@ -377,8 +440,6 @@ class Finder extends React.Component{
                 this.sessionUser();
 
             });
-            console.log(this.state.loginAuth, this.state.passwordAuth);
-
          };
         // this.sessionUser();
 
@@ -488,6 +549,15 @@ class Finder extends React.Component{
             on: newDate
         });
     }
+    handleChangeDateArrow(date){
+        let newDate = new Date();
+        newDate.setDate(this.state.on.getDate() + date);
+        this.setState({
+            on: newDate
+        }, function(){
+            this.handleSubmit(this.state.on);
+        });
+    }
 
     handleDirectChange(direct){
         this.setState({ direct });
@@ -502,11 +572,14 @@ class Finder extends React.Component{
 
     }
     handleSubmit(el){
+        console.log(el);
         this.loadin();
 
         let direct = this.state.direct ? this.state.direct : 0;
         let on_date = this.state.on;
-
+        if (typeof el === 'string' || el instanceof String){
+            on_date = el;
+        }
 
         let day = on_date.getDate() > 9 ? on_date.getDate() : '0'+on_date.getDate();
         let month = on_date.getMonth()+1;
@@ -553,8 +626,19 @@ class Finder extends React.Component{
                 };
                 funcDate(dataCalendarTest);
                 findInArray(arrActive, arrDate);
+                let arrDate2 = [];
+                for (let i=0;i < arrDate.length;i++){
+                    let stylingDateElement = {};
+                    if (new Date(arrDate[i]) < new Date()){
+                        stylingDateElement = { 'color' : 'grey', 'cursor' : 'no-drop' };
+                    }
+                    if (new Date(arrDate[i]).getDate() == new Date(this.state.on).getDate()){
+                        stylingDateElement = { 'border' : '2px solid black' };
+                    }
+                    arrDate2.push({ 'element':  arrDate[i], 'stylingDateElement' : stylingDateElement });
+                }
                 this.setState({
-                    dataCalendar : arrDate,
+                    dataCalendar : arrDate2,
                     resErrorRace: false,
                     showByTic: 'none',
                     blockShow: 'block'
@@ -585,9 +669,14 @@ class Finder extends React.Component{
         );
 
     }
-    testFunction(el){
-        this.setState({on: el});
-       this.handleSubmit(el);
+    changeDateOnCalendar(el){
+        let nowDate = new Date();
+        let clickedDate = new Date(el);
+        if (clickedDate >= nowDate){
+            this.setState({on: el}, function(){
+                this.handleSubmit(this.state.on);
+            });
+        }
 
     }
     displayCalendar(){
@@ -620,7 +709,6 @@ class Finder extends React.Component{
         borderBottomLeftRadius: '5px',
         borderBottomRightRadius: '5px'
         };
-        // this.sessionUser();
         const pushme = [];
         let arrayForSession = this.state.sessionUserActiv;
 
@@ -900,27 +988,30 @@ class Finder extends React.Component{
                             null
                         }
                     </div>
-                    {/*<div className="blockCalender" style={{display: this.state.visibleCalendar}}>*/}
                     <div className="blockCalender"  style={{display: this.state.blockShow}}>
 
-                    <div className="calendar__prev" style={{display: this.state.visibleCalendar}} >
+                    <div className="calendar__prev"
+                         style={{display: this.state.visibleCalendar}}
+                            onClick={this.handleChangeDateArrow.bind(this, -1)}>
                         </div>
                         {/*календарь*/}
                         { this.state.dataCalendar.map((dateCalendar, key) =>
-                                <div key={key} onClick={() => this.testFunction(dateCalendar)}>
-                                <div className="calendar__item calendar__key3 styleForDays"  >
+                                <div key={key} onClick={() => this.changeDateOnCalendar(dateCalendar.element)}>
+                                <div className="calendar__item calendar__key3 styleForDays" style={dateCalendar.stylingDateElement} >
                                     <p>
                                         <Moment format="D MMM" withTitle>
-                                            {dateCalendar}
+                                            {dateCalendar.element}
                                         </Moment><br/>
                                         <Moment format="dddd" withTitle>
-                                            {dateCalendar}
+                                            {dateCalendar.element}
                                         </Moment>
                                     </p></div>
                             </div>
 
                         )}
-                        <div className="calendar__next" style={{display: this.state.visibleCalendar}}>
+                        <div className="calendar__next"
+                             style={{display: this.state.visibleCalendar}}
+                             onClick={this.handleChangeDateArrow.bind(this, 1)}>
                         </div>
                     </div>
                 </div>
@@ -1055,7 +1146,7 @@ class Finder extends React.Component{
                                         <div className="col-md-6 col-sm-6 col-xs-6"><label
                                             className="m-verify-panel__form-label"
                                             htmlFor="checkout_passenger1_1021051141151169511097109101">Имя</label>
-                                            <div className="form-group has-error">
+                                            <div className={this.state.nameSBlockClass}>
                                                 <div className="">
                                                     <div>
                                                         <div>
@@ -1066,14 +1157,14 @@ class Finder extends React.Component{
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <label className="error control-label"
+                                                <label  style={{display: this.state.nameSErrorBlock}} className="error control-label"
                                                        htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
                                                     ваше имя</label></div>
                                         </div>
                                         <div className="col-md-6 col-sm-6 col-xs-6"><label
                                             className="m-verify-panel__form-label"
                                             htmlFor="checkout_passenger1_108971151169511097109101">Фамилия</label>
-                                            <div className="form-group">
+                                            <div className={this.state.surnameSBlockClass}>
                                                 <div className="">
                                                     <div>
                                                         <div><input id="checkout_passenger1_108971151169511097109101"
@@ -1085,6 +1176,10 @@ class Finder extends React.Component{
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <label style={{display: this.state.surnameSErrorBlock}} className="error control-label"
+                                                       htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                                    вашу фамилию</label>
                                             </div>
                                         </div>
                                     </div>
@@ -1120,23 +1215,30 @@ class Finder extends React.Component{
                             <div className="checkout__customer-form">
                                 <div className="col-md-6 col-sm-6 col-xs-6"><label
                                     className="m-verify-panel__form-label" htmlFor="checkout_email">E-mail</label>
-                                    <div className="form-group"><input id="checkout_email" type="email"
+                                    <div className={this.state.emailSBlockClass}><input id="checkout_email" type="email"
                                                                        className="form-control"
                                                                        placeholder="ashevchenko@gmail.com"
                                                                        value={this.state.emailS} onChange={this.emailS}
                                                                        label="E-mail" autoCorrect="off"
                                                                        autoCapitalize="false" autoComplete="on" name=""
-                                                                        /></div>
+                                                                        />
+                                        <label style={{display: this.state.emailSErrorBlock}} className="error control-label"
+                                               htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                            вашу почту</label>
+                                    </div>
                                 </div>
                                 <div className="col-md-6 col-sm-6 col-xs-6"><label
                                     className="m-verify-panel__form-label" htmlFor="checkout_phone">Телефон</label>
-                                    <div className="form-group">
+                                    <div className={this.state.phoneSBlockClass}>
                                         <div><input id="checkout_phone" name="phone" type="tel" maxLength="17"
                                                     value={this.state.phoneS} onChange={this.phoneS}
                                                     autoComplete="on" label="Телефон" placeholder="380 __ ___ ____"
                                                     className="auth__input"  /><span
                                             className="auth__plus text-muted" > </span>
                                         </div>
+                                        <label style={{display: this.state.phoneSErrorBlock}} className="error control-label"
+                                               htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                            ваш телефон</label>
                                     </div>
                                 </div>
                             </div>
@@ -1145,12 +1247,12 @@ class Finder extends React.Component{
                         {this.state.userAr.map((list, key) =>
 
                             <div key={key} className="checkout-panel checkout__customer"><p
-                                className="checkout__customer-title">Информация о пассажире {list.key}</p>
+                                className="checkout__customer-title">Информация о пассажире {list.kkey}</p>
                                 <div className="checkout__customer-form">
                                     <div className="col-md-6 col-sm-6 col-xs-6"><label
                                         className="m-verify-panel__form-label"
                                         htmlFor="checkout_passenger1_1021051141151169511097109101">Имя</label>
-                                        <div className="form-group has-error">
+                                        <div className={list.blocknameS}>
                                             <div className="">
                                                 <div>
                                                     <div>
@@ -1159,42 +1261,62 @@ class Finder extends React.Component{
                                                             type="text" className="form-control" placeholder="Иван"
                                                             label="Имя"
                                                             value={list.nameS}
-                                                            onChange={this.pushArrUs(key)}  />
+                                                            onChange={this.pushnameS(key)}  />
 
                                                     </div>
                                                 </div>
                                             </div>
-                                            <label className="error control-label"
+                                            <label
+                                                style={{'display' : list.labelnameS}}
+                                                className="error control-label"
                                                    htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
                                                 ваше имя</label></div>
                                     </div>
                                     <div className="col-md-6 col-sm-6 col-xs-6"><label
                                         className="m-verify-panel__form-label"
                                         htmlFor="checkout_passenger1_108971151169511097109101">Фамилия</label>
-                                        <div className="form-group">
+                                        <div className={list.blocksurnameS}>
                                             <div className="">
                                                 <div>
-                                                    <div><input id="checkout_passenger1_108971151169511097109101"
-                                                                type="text" className="form-control"
-                                                                placeholder="Иванов" autoCapitalize="true"
-                                                                value="" onChange={this.surnameS}
-                                                                autoCorrect="off" label="Фамилия"
-                                                                autoComplete="xRfb0tATz" name="xRfb0tATz_"  />
+                                                    <div><input type="text"
+                                                                className="form-control"
+                                                                placeholder="Иванов"
+                                                                autoCapitalize="true"
+                                                                value={list.surnameS}
+                                                                onChange={this.pushsurnameS(key)}
+                                                                autoCorrect="off"
+                                                                label="Фамилия"
+                                                                name="surnameS[]"  />
                                                     </div>
                                                 </div>
                                             </div>
+                                            <label
+                                                style={{'display' : list.labelsurnameS}}
+                                                className="error control-label"
+                                                htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                                вашу фамилию</label>
                                         </div>
                                     </div>
 
                                     <div className="col-md-6 col-sm-6 col-xs-6"><label
                                         className="m-verify-panel__form-label" htmlFor="checkout_phone">Телефон</label>
-                                        <div className="form-group">
-                                            <div><input id="checkout_phone" name="phone" type="tel" maxLength="17"
-                                                        value="" onChange={this.phoneS}
-                                                        autoComplete="on" label="Телефон" placeholder="380 __ ___ ____"
+                                        <div className={list.blockphoneS}>
+                                            <div><input  name="phoneS[]"
+                                                         type="tel"
+                                                         maxLength="17"
+                                                         value={list.phoneS}
+                                                         onChange={this.pushphoneS(key)}
+                                                        autoComplete="on"
+                                                         label="Телефон"
+                                                         placeholder="380 __ ___ ____"
                                                         className="auth__input"  /><span
                                                 className="auth__plus text-muted" > </span>
                                             </div>
+                                            <label
+                                                style={{'display' : list.labelphoneS}}
+                                                className="error control-label"
+                                                htmlFor="checkout_passenger1_1021051141151169511097109101">Напишите
+                                                ваш телефон</label>
                                         </div>
                                     </div>
                                 </div>

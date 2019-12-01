@@ -168,11 +168,11 @@
 }
 .blockCalender{
     /*margin-left: 380px;*/
-    position: absolute;
+    position: relative;
     left:50%;
-    margin-left:-35%;
+    margin-left:-27%;
     height: 20px;
-    width: 1000px;
+    width: 1200px;
 }
 .styleFindBlock{
  border: 2px solid darkgreen;
