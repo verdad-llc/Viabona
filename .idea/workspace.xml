@@ -4,8 +4,6 @@
     <list default="true" id="6c65944e-4a6e-476f-bfc5-02f2c6f2a1b3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Components/Finder.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Finder.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Styles/teststyle.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/Styles/teststyle.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -118,7 +116,8 @@
       <workItem from="1574838242995" duration="26782000" />
       <workItem from="1574925574929" duration="21347000" />
       <workItem from="1575011302535" duration="18629000" />
-      <workItem from="1575110545846" duration="13843000" />
+      <workItem from="1575110545846" duration="15138000" />
+      <workItem from="1575375584738" duration="9018000" />
     </task>
     <servers />
   </component>
@@ -143,7 +142,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/Components/Finder.js</url>
-          <line>544</line>
+          <line>606</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

@@ -54,6 +54,7 @@ class Finder extends React.Component{
             on : new Date(),
             passengers : '1',
             cityList: [],
+            ticketsInfo: [],
             tripList: [],
             tripId: '',
             raceId: '',
@@ -74,6 +75,8 @@ class Finder extends React.Component{
             showSign:true,
             showReg:false,
             showBlockNone: false,
+            showBlockTickets: false,
+            showBlockProfile: false,
             loadingTwo: false,
             NameUser: "Вход/Регистрация",
             sessionUserActiv: [],
@@ -130,8 +133,12 @@ class Finder extends React.Component{
         this.showBlockRegister = this.showBlockRegister.bind(this);
         this.passInp = this.passInp.bind(this);
         this.sessionUser = this.sessionUser.bind(this);
+        this.ticketsInfoFunction = this.ticketsInfoFunction.bind(this);
+        this.handleSaveProfile = this.handleSaveProfile.bind(this);
         this.dataSessionUser = this.dataSessionUser.bind(this);
         this.deleteLocal = this.deleteLocal.bind(this);
+        this.showBlockProfileFunction = this.showBlockProfileFunction.bind(this);
+        this.showBlockTicketsFunction = this.showBlockTicketsFunction.bind(this);
         //заказ билета
         this.nameS = this.nameS.bind(this);
         this.surnameS = this.surnameS.bind(this);
@@ -145,6 +152,26 @@ class Finder extends React.Component{
         this.pushphoneS = this.pushphoneS.bind(this);
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
+    }
+    handleSaveProfile(){
+        axios({
+            method: 'post',
+            url: 'http://new.viabona.com.ua/api/index.php/api/octobus/save_profile',
+            data: {
+                name: this.state.nameS,
+                surname: this.state.surnameS,
+                email: this.state.emailS,
+                phone: this.state.phoneS,
+                id: localStorage.userID
+            }
+        }).then(res => {
+            console.log(res.data);
+            alert('Данные успешно обновлены');
+            localStorage.name = this.state.nameS;
+            localStorage.surname = this.state.surnameS;
+            localStorage.email = this.state.emailS;
+            localStorage.phone = this.state.phoneS;
+        });
     }
     PayArr(name, surname, email, phone) {
 
@@ -327,13 +354,45 @@ class Finder extends React.Component{
         localStorage.removeItem("surname");
         localStorage.removeItem("email");
         localStorage.removeItem("phone");
+        localStorage.removeItem("UserID");
         this.setState({
             nameS: "",
             surnameS: "",
             emailS: "",
-            phoneS: ""
+            UserID: "",
+            phoneS: "",
+            ticketsInfo: []
+        });
+        this.setState({
+            showBlockTickets: false,
+            showBlockProfile: false,
         })
 
+    }
+    ticketsInfoFunction(userID){
+       // alert(userID);
+       // if (userID > 0){
+            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyertickets?id=' + userID).then(res => {
+                this.setState({
+                    ticketsInfo : res.data
+                });
+            });
+       // }
+
+    }
+
+    showBlockProfileFunction(){
+        this.setState({
+            showBlockProfile: !this.state.showBlockProfile,
+            showBlockTickets: false
+        });
+    }
+    showBlockTicketsFunction(){
+        this.ticketsInfoFunction(localStorage.userID);
+        this.setState({
+            showBlockTickets: !this.state.showBlockTickets,
+            showBlockProfile: false
+        });
     }
 
     passInp(data) {
@@ -435,10 +494,8 @@ class Finder extends React.Component{
                     userID: res.data.id,
                     phone: res.data.phone
                 })
-                console.log(this.state.email);
 
                 this.sessionUser();
-
             });
          };
         // this.sessionUser();
@@ -446,18 +503,20 @@ class Finder extends React.Component{
     }
 
     sessionUser(){
-        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/sessionuser?surname=' +  this.state.surname  + '&name=' +  this.state.nameTest +  '&email=' + this.state.email + '&phone=' + this.state.phone).then(res => {
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/sessionuser?surname=' +  this.state.surname  + '&name=' +  this.state.nameTest +  '&email=' + this.state.email + '&phone=' + this.state.phone + '&id=' + this.state.userID).then(res => {
 
             // console.log(res.data);
             localStorage.name = res.data.name;
             localStorage.surname = res.data.surname;
             localStorage.email = res.data.email;
             localStorage.phone = res.data.phone;
+            localStorage.userID = res.data.id;
 
             this.setState({
                 nameS: localStorage.name,
                 surnameS: localStorage.surname,
                 emailS: localStorage.email,
+                userID: localStorage.userID,
                 phoneS: localStorage.phone
             });
             this.setState({
@@ -466,6 +525,8 @@ class Finder extends React.Component{
             this.setState({
                 sessionUserActiv : res.data
             });
+
+
         });
     }
     dataSessionUser(){
@@ -520,6 +581,7 @@ class Finder extends React.Component{
                 cityList : res.data
             });
         });
+
         if (localStorage.name){
             this.setState({nameS: localStorage.name});
         }
@@ -722,11 +784,51 @@ class Finder extends React.Component{
             <div className="mainMainBlock" >
                 <div className="myCab" >
                     {localStorage.name ?
-                        <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.deleteLocal()}>вы вошли как: {localStorage.name}   /  выйти </p></div>
+                        <div>
+                            <p>{localStorage.name}</p>
+                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockProfileFunction()}>Мой профиль</p>
+                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockTicketsFunction()}>Мои билеты</p>
+                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.deleteLocal()}>Выход</p>
+
+                        </div>
                         :
                         <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Войти/зарегестрироватся</p></div>}
                 </div>
-
+                <div className="blockSign" style={{display: this.state.showBlockProfile ? 'block' : 'none'}}>
+                    <div >
+                        <div >
+                            <div >
+                                <div className="showSignBlock">
+                                    Имя: <input type="text" name="nameS" value={this.state.nameS}  onChange={this.nameS}/><br/>
+                                    Фамилия: <input type="text" name="surnameS"  value={this.state.surnameS}  onChange={this.surnameS}/><br/>
+                                    Почта: <input type="text" name="emailS" value={this.state.emailS}  onChange={this.emailS}/><br/>
+                                    Телефон: <input type="text" name="phoneS" value={this.state.phoneS}  onChange={this.phoneS}/><br/>
+                                    <button className="btn btn-primary" onClick={this.handleSaveProfile}>Сохранить значения</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="blockSign" style={{display: this.state.showBlockTickets ? 'block' : 'none'}}>
+                    <div >
+                        <div >
+                            <div >
+                                <div className="showSignBlock">
+                                    <h3>Список билетов</h3>
+                                    { this.state.ticketsInfo.map((list, key) =>
+                                        <div key={key}>
+                                            <p>
+                                                Название рейса: {list.raceName}
+                                            </p><p>
+                                                Перевозчик: {list.carrierName}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {/* форма реестрации*/}
                 <div className="blockSign" style={{display: this.state.showBlockNone ? 'block' : 'none'}}>
                     <div >
