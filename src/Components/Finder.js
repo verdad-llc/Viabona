@@ -24,9 +24,17 @@ class Finder extends React.Component{
     constructor(props){
 
         super(props);
-        this.state = { showMe:true};
         this.state = {
             from : 'Киев',
+            showMe : true,
+            modalUserProfileClass : "modal fade",
+            modalUserProfileStyle : 'none',
+            modalUserLoginClass : "modal fade",
+            modalUserLoginStyle : 'none',
+            modalUserRegisterClass : "modal fade",
+            modalUserRegisterStyle : 'none',
+            modalUserTicketsClass : "modal fade",
+            modalUserTicketsStyle : 'none',
             fromID : 2,
             displayLogin : 'none',
             errorLogin : '',
@@ -83,6 +91,8 @@ class Finder extends React.Component{
             //переменные для сесии
             nameS: "",
             surnameS: "",
+            passwordS: "",
+            password2S: "",
             emailS: "",
             phoneS: "",
             //end session
@@ -131,6 +141,7 @@ class Finder extends React.Component{
         this.subDataForReg = this.subDataForReg.bind(this);
         this.subDataForAuth = this.subDataForAuth.bind(this);
         this.showBlockRegister = this.showBlockRegister.bind(this);
+        this.showBlockLogin = this.showBlockLogin.bind(this);
         this.passInp = this.passInp.bind(this);
         this.sessionUser = this.sessionUser.bind(this);
         this.ticketsInfoFunction = this.ticketsInfoFunction.bind(this);
@@ -138,9 +149,15 @@ class Finder extends React.Component{
         this.dataSessionUser = this.dataSessionUser.bind(this);
         this.deleteLocal = this.deleteLocal.bind(this);
         this.showBlockProfileFunction = this.showBlockProfileFunction.bind(this);
+        this.CloseModalUserProfile = this.CloseModalUserProfile.bind(this);
+        this.CloseModalUserTickets = this.CloseModalUserTickets.bind(this);
+        this.CloseModalLogin = this.CloseModalLogin.bind(this);
+        this.CloseModalRegister = this.CloseModalRegister.bind(this);
         this.showBlockTicketsFunction = this.showBlockTicketsFunction.bind(this);
         //заказ билета
         this.nameS = this.nameS.bind(this);
+        this.passwordS = this.passwordS.bind(this);
+        this.password2S = this.password2S.bind(this);
         this.surnameS = this.surnameS.bind(this);
         this.emailS = this.emailS.bind(this);
         this.phoneS = this.phoneS.bind(this);
@@ -153,17 +170,30 @@ class Finder extends React.Component{
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
     }
-    handleSaveProfile(){
-        axios({
-            method: 'post',
-            url: 'http://new.viabona.com.ua/api/index.php/api/octobus/save_profile',
-            data: {
-                name: this.state.nameS,
-                surname: this.state.surnameS,
-                email: this.state.emailS,
-                phone: this.state.phoneS,
+    handleSaveProfile(password = false){
+        let $request = {
+            name: this.state.nameS,
+            surname: this.state.surnameS,
+            email: this.state.emailS,
+            phone: this.state.phoneS,
+            id: localStorage.userID
+        };
+        let $endpoint = 'http://new.viabona.com.ua/api/index.php/api/octobus/save_profile';
+        if (password){
+            if (this.state.passwordS != this.state.password2S){
+                alert('Пароли не совспадают!');
+                return false;
+            }
+            $request = {
+                password: this.state.passwordS,
                 id: localStorage.userID
             }
+            $endpoint = 'http://new.viabona.com.ua/api/index.php/api/octobus/save_password';
+        }
+        axios({
+            method: 'post',
+            url: $endpoint,
+            data: $request
         }).then(res => {
             console.log(res.data);
             alert('Данные успешно обновлены');
@@ -338,6 +368,12 @@ class Finder extends React.Component{
     nameS(el){
             this.setState({nameS: el.target.value});
     }
+    passwordS(el){
+            this.setState({passwordS: el.target.value});
+    }
+    password2S(el){
+            this.setState({password2S: el.target.value});
+    }
     surnameS(el){
         this.setState({surnameS: el.target.value});
     }
@@ -380,18 +416,46 @@ class Finder extends React.Component{
        // }
 
     }
-
-    showBlockProfileFunction(){
+    CloseModalUserProfile(){
         this.setState({
-            showBlockProfile: !this.state.showBlockProfile,
-            showBlockTickets: false
+            modalUserProfileClass: 'modal fade',
+            modalUserProfileStyle: 'none'
         });
     }
+    CloseModalUserTickets(){
+        this.setState({
+            modalUserTicketsClass: 'modal fade',
+            modalUserTicketsStyle: 'none'
+        });
+    }
+    CloseModalLogin(){
+        this.setState({
+            modalUserLoginClass: 'modal fade',
+            modalUserLoginStyle: 'none'
+        });
+    }
+    CloseModalRegister(){
+        this.setState({
+            modalUserRegisterClass: 'modal fade',
+            modalUserRegisterStyle: 'none'
+        });
+    }
+    showBlockProfileFunction(){
+       /* this.setState({
+            showBlockProfile: !this.state.showBlockProfile,
+            showBlockTickets: false
+        });*/
+        this.setState({
+            modalUserProfileClass: 'modal fade in',
+            modalUserProfileStyle: 'block'
+        });
+    }
+
     showBlockTicketsFunction(){
         this.ticketsInfoFunction(localStorage.userID);
         this.setState({
-            showBlockTickets: !this.state.showBlockTickets,
-            showBlockProfile: false
+            modalUserTicketsClass: 'modal fade in',
+            modalUserTicketsStyle: 'block'
         });
     }
 
@@ -408,9 +472,22 @@ class Finder extends React.Component{
 
     }
     showBlockRegister() {
-        this.setState({
+       /* this.setState({
             showBlockNone: !this.state.showBlockNone
-        })
+        });*/
+        this.setState({
+            modalUserRegisterClass: 'modal fade in',
+            modalUserRegisterStyle: 'block'
+        });
+    }
+    showBlockLogin() {
+       /* this.setState({
+            showBlockNone: !this.state.showBlockNone
+        });*/
+        this.setState({
+            modalUserLoginClass: 'modal fade in',
+            modalUserLoginStyle: 'block'
+        });
     }
     subDataForReg() {
         let canSentForm = true;
@@ -464,8 +541,16 @@ class Finder extends React.Component{
         if (canSentForm) {
             axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyerreg?login=' + this.state.login + '&password=' + this.state.password + '&surname=' + this.state.surname + '&name=' + this.state.nameTest + '&email=' + this.state.email + '&phone=' + this.state.phone).then(res => {
                 console.log(res.data);
+                if (res.data.auto_auth){
+                    this.setState({
+                        loginAuth: this.state.login,
+                        passwordAuth: this.state.password
+                    });
+                    this.subDataForAuth();
+                    this.CloseModalRegister();
+                }
             });
-            console.log(this.state.login);
+            //console.log(this.state.login);
         }
     }
     subDataForAuth() {
@@ -485,17 +570,19 @@ class Finder extends React.Component{
                     this.setState({
                         showBlockNone: !this.state.showBlockNone,
                         NameUser: "вы вошли как " + res.data.name
-                    })
-                }
-                this.setState({
-                    nameTest: res.data.name,
-                    surname: res.data.surname,
-                    email: res.data.email,
-                    userID: res.data.id,
-                    phone: res.data.phone
-                })
+                    });
 
-                this.sessionUser();
+                    this.setState({
+                        nameTest: res.data.name,
+                        surname: res.data.surname,
+                        email: res.data.email,
+                        userID: res.data.id,
+                        phone: res.data.phone
+                    })
+
+                    this.sessionUser();
+                    this.CloseModalLogin();
+                }
             });
          };
         // this.sessionUser();
@@ -792,23 +879,119 @@ class Finder extends React.Component{
 
                         </div>
                         :
-                        <div><p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Войти/зарегестрироватся</p></div>}
+                        <div>
+                            <a href="#" style={{cursor: 'pointer'}} onClick={()=>this.showBlockLogin()}>Вход</a> | <a href="#" style={{cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Регистрация</a>
+                            </div>}
                 </div>
-                <div className="blockSign" style={{display: this.state.showBlockProfile ? 'block' : 'none'}}>
-                    <div >
-                        <div >
-                            <div >
-                                <div className="showSignBlock">
-                                    Имя: <input type="text" name="nameS" value={this.state.nameS}  onChange={this.nameS}/><br/>
-                                    Фамилия: <input type="text" name="surnameS"  value={this.state.surnameS}  onChange={this.surnameS}/><br/>
-                                    Почта: <input type="text" name="emailS" value={this.state.emailS}  onChange={this.emailS}/><br/>
-                                    Телефон: <input type="text" name="phoneS" value={this.state.phoneS}  onChange={this.phoneS}/><br/>
-                                    <button className="btn btn-primary" onClick={this.handleSaveProfile}>Сохранить значения</button>
+
+                <div className={this.state.modalUserProfileClass} id="modalUserProfile" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style={{display: this.state.modalUserProfileStyle}}>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" onClick={()=>this.CloseModalUserProfile()} data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 className="modal-title" id="myModalLabel">Мой профиль</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label htmlFor="cp_nameS">Имя:</label>
+                                    <input type="text" className="form-control" id="cp_nameS" name="nameS" value={this.state.nameS}  onChange={this.nameS}/>
+                                    <label htmlFor="cp_surnameS">Фамилия:</label>
+                                    <input type="text" id="cp_surnameS" className="form-control" name="surnameS"  value={this.state.surnameS}  onChange={this.surnameS}/>
+                                    <label htmlFor="cp_emailS">Почта:</label>
+                                    <input type="text" id="cp_emailS" className="form-control" name="emailS" value={this.state.emailS}  onChange={this.emailS}/>
+                                    <label htmlFor="cp_phoneS">Телефон:</label>
+                                    <input type="text" id="cp_phoneS" className="form-control" name="phoneS" value={this.state.phoneS}  onChange={this.phoneS}/>
+
                                 </div>
+
+                                <div className="form-group" style={{textAlign: 'right'}}>
+                                    <button className="btn btn-primary verdad-btn" onClick={this.handleSaveProfile}>Сохранить</button>
+                                </div>
+
+                            </div>
+                            <div className="modal-footer">
+                                <h5 style={{textAlign: 'left'}}>Изменить пароль</h5>
+                                <div className="form-group" style={{textAlign: 'left'}}>
+                                    <label htmlFor="cp_passwordS">Новый Пароль:</label>
+                                    <input type="text" className="form-control" id="cp_passwordS" name="passwordS" value={this.state.passwordS}  onChange={this.passwordS}/>
+                                    <label htmlFor="cp_password2S">Повторите Пароль:</label>
+                                    <input type="text" className="form-control" id="cp_password2S" name="password2S" value={this.state.password2S}  onChange={this.password2S}/>
+                                </div>
+                                <button className="btn btn-primary verdad-btn" onClick={this.handleSaveProfile.bind(this, true)}>Изменить пароль</button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
+                {/*Список билетов*/}
+                <div className={this.state.modalUserTicketsClass} id="modalUserProfile" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style={{display: this.state.modalUserTicketsStyle}}>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" onClick={()=>this.CloseModalUserTickets()} data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 className="modal-title" id="myModalLabel">Мои билеты</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div className="table-responsive" style={{overflowY:'scroll', maxHeight: '500px', height: '500px'}}>
+                                    <table className="table table-striped table-hovered table-bordered">
+                                        <tbody>
+                                        { this.state.ticketsInfo.map((list, key) =>
+                                            <tr key={key}>
+                                                <td>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}><b>Отправление:</b><br/>
+                                                                    {list.lastName} {list.name}
+                                                                    <br/>
+                                                                    {list.timeDep}, {list.dateDep} | {list.stDepName} | {list.stDepAddr}
+                                                                </td>
+                                                                <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}><b>Прибытие:</b><br/>
+                                                                    {list.timeArr}, {list.dateArr} | {list.stArrName} | {list.stArrAddr}
+                                                                </td>
+                                                            </tr>
+                                                        <tr>
+                                                            <td style={{
+                                                                border: '1px solid #dee2e6',
+                                                                verticalAlign: 'top',
+                                                                textAlign: 'left',
+                                                                padding: '10px', width:'50%'
+                                                            }}>
+                                                                <b>В пути:</b><br/>
+                                                                {list.wayHour}:{list.wayMin}<br/>
+                                                                <b>Место:</b><br/>
+                                                                {list.place}
+                                                            </td>
+                                                            <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}>
+                                                                <b>Цена:</b><br/>
+                                                                {list.price} {list.curr}
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td><hr/></td>
+                                            </tr>
+                                        )}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div className="modal-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <div className="blockSign" style={{display: this.state.showBlockTickets ? 'block' : 'none'}}>
                     <div >
                         <div >
@@ -829,68 +1012,108 @@ class Finder extends React.Component{
                         </div>
                     </div>
                 </div>
-                {/* форма реестрации*/}
-                <div className="blockSign" style={{display: this.state.showBlockNone ? 'block' : 'none'}}>
-                    <div >
-                        <div >
-                            <div >
-                                <div className="showSignBlock">
-                                    <h4 style={{ cursor: 'pointer'}} onClick={()=>this.signFunction()}>Уже зарегистрированы? Войти</h4>
-                                    <div style={{display: this.state.showSign ? 'block' : 'none' }}>
-                                        <div className="showSignBlock">
-                                            <p className="styleTextUser">Логин</p>
-                                            <input className="inputUser" type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
-                                            <p className="styleTextUser">Пароль</p>
-                                            <input className="inputUser" type="password" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
-                                            <p className={this.state.erAuth}>Логин или пароль введены не верно</p>
-                                            <p  className="styleTextUserSend" onClick={this.subDataForAuth}>авторизироватся</p>
-                                        </div>
-                                    </div>
+                {/* форма авторизации*/}
+
+                <div className={this.state.modalUserLoginClass} id="modalUserLogin" tabIndex="-1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true"
+                     style={{display: this.state.modalUserLoginStyle}}>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" onClick={() => this.CloseModalLogin()}
+                                        data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 className="modal-title" id="myModalLabel">Авторизация</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label htmlFor="loginAuth">Логин:</label>
+                                    <input className="form-control" id="loginAuth"  type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
+                                    <label htmlFor="passwordAuth">Пароль:</label>
+                                    <input className="form-control" type="password" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
+                                    <p className={this.state.erAuth}>Логин или пароль введены не верно</p>
                                 </div>
+
+                                <div className="form-group" style={{textAlign: 'right'}}>
+                                    <button className="btn btn-primary verdad-btn"
+                                            onClick={this.subDataForAuth}>Войти
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div className="modal-footer">
+
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div >
-                            <div className="showSignBlock">
-                                <div><span>------------------------или------------------------</span></div>
-                                <h4 onClick={()=>this.regFunction()}>Нет аккаунта? Зарегистрироваться</h4>
-                                <div  style={{display: this.state.showReg ? 'block' : 'none' }}>
-                                <div>
-                                    <div className="showSignBlockMain">
-                                        <div className="showSignBlock">
-                                            <p className="styleTextUser">Логин:</p>
-                                            <input placeholder="Логин" type="text" className="inputUser {this.state.errorLogin}" name="login" value={this.state.login} onChange={this.handleChange}/>
-                                            <p className={this.state.erLogin}>не коректно введен логин </p>
-                                            <p className="styleTextUser">Пароль:</p>
-                                            <input  placeholder="Пароль" className="inputUser" type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
-                                            <p className={this.state.erPassword}>не коректный пароль</p>
-                                            <p className="styleTextUser">email:</p>
-                                            <input placeholder="your@gmail.com" className="inputUser" type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-                                            <p className={this.state.erEmail}>Введите емеил коректно</p>
 
-                                        </div>
-                                        <div className="showSignBlockTwo">
-                                            <p  className="styleTextUser">Имя:</p>
-                                            <input placeholder="Ваше имя" className="inputUser" type="text" name="nameTest" value={this.state.nameTest} onChange={this.handleChange}/>
-                                            <p className={this.state.erName}>Введите имя коректно</p>
-                                            <p className="styleTextUser">Фамилия:</p>
-                                            <input placeholder="Ваша фамилия" className="inputUser" type="text" name="surname" value={this.state.surname} onChange={this.handleChange}/>
-                                            <p className={this.state.erSurname}>Фамилия введена не корректно</p>
-                                            <p className="styleTextUser">телефон:</p>
-                                            <input placeholder="+38 099-000-00-00" className="inputUser" type="text" name="phone" value={this.state.phone} onChange={this.handleChange}/>
-                                            <p className={this.state.erPhone}>Введите мобильный номер корректно</p>
-                                        </div>
-                                    </div>
-                                <div className="classForButSendReg">
-                                    <p className="styleTextUserSendReg" onClick={this.subDataForReg}>регистрация</p>
+                {/* форма регистрации*/}
+
+                <div className={this.state.modalUserRegisterClass} id="modalUserLogin" tabIndex="-1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true"
+                     style={{display: this.state.modalUserRegisterStyle}}>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" onClick={() => this.CloseModalRegister()}
+                                        data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 className="modal-title" id="myModalLabel">Регистрация</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label htmlFor="login">Логин:</label>
+                                    <input placeholder="Логин" id="login" type="text" className="form-control {this.state.errorLogin}" name="login" value={this.state.login} onChange={this.handleChange}/>
+                                    <p className={this.state.erLogin}>не коректно введен логин </p>
+
+                                    <label htmlFor="password">Пароль:</label>
+                                    <input placeholder="Пароль" id="password" className="form-control {this.state.erPassword}" type="password" name="password" value={this.state.password} onChange={this.handleChange}/>
+                                    <p className={this.state.erPassword}>не коректный пароль</p>
+
+
+                                    <label htmlFor="email">Email:</label>
+                                    <input placeholder="email@gmail.com" className="form-control {this.state.erEmail}" type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+                                    <p className={this.state.erEmail}>Введите емеил коректно</p>
+
+
+                                    <label htmlFor="nameTest">Имя:</label>
+                                    <input placeholder="Имя" id="nameTest"
+                                           className="form-control {this.state.erName}" type="text" name="nameTest" value={this.state.nameTest}
+                                           onChange={this.handleChange}/>
+                                    <p className={this.state.erName}>Введите имя коректно</p>
+
+
+                                    <label htmlFor="surname">Фамилия:</label>
+                                    <input id="surname" placeholder="Ваша фамилия" className="form-control {this.state.erSurname}" type="text" name="surname" value={this.state.surname} onChange={this.handleChange}/>
+                                    <p className={this.state.erSurname}>Фамилия введена не корректно</p>
+
+
+                                    <label htmlFor="phone">Телефон:</label>
+                                    <input id="phone" placeholder="+38 099-000-00-00" className="form-control {this.state.erPhone}" type="text" name="phone" value={this.state.phone} onChange={this.handleChange}/>
+                                    <p className={this.state.erPhone}>Введите мобильный номер корректно</p>
+
                                 </div>
+
+                                <div className="form-group" style={{textAlign: 'right'}}>
+                                    <button className="btn btn-primary verdad-btn"
+                                            onClick={this.subDataForReg}>Зарегистрироваться
+                                    </button>
                                 </div>
-                                </div>
+
+                            </div>
+                            <div className="modal-footer">
+
                             </div>
                         </div>
                     </div>
                 </div>
                 {/*    конец блока регистрации*/}
+
+
                 <div className="fixBox">
                 <div className="styleFindBlock">
 
