@@ -60,6 +60,7 @@ class Finder extends React.Component{
             showByTic: 'none',
             blockShow: 'block',
             on : new Date(),
+            onback : new Date(),
             passengers : '1',
             cityList: [],
             ticketsInfo: [],
@@ -135,6 +136,7 @@ class Finder extends React.Component{
         this.handleDirectChange = this.handleDirectChange.bind(this);
         this.handleGoBackChange = this.handleGoBackChange.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
+        this.handleDayBackChange = this.handleDayBackChange.bind(this);
         this.changeDateOnCalendar  = this.changeDateOnCalendar.bind(this);
         this.signFunction = this.signFunction.bind(this);
         this.regFunction  = this.regFunction.bind(this);
@@ -646,6 +648,10 @@ class Finder extends React.Component{
         this.setState({on : day});
     }
 
+    handleDayBackChange(day){
+        this.setState({onback : day});
+    }
+
 
     handleReverseCities() {
         let _from = this.state.from;
@@ -721,10 +727,11 @@ class Finder extends React.Component{
 
     }
     handleSubmit(el){
-        console.log(el);
+       // console.log(el);
         this.loadin();
 
         let direct = this.state.direct ? this.state.direct : 0;
+        let goback = this.state.goback ? this.state.goback : 0;
         let on_date = this.state.on;
         if (typeof el === 'string' || el instanceof String){
             on_date = el;
@@ -733,7 +740,16 @@ class Finder extends React.Component{
         let day = on_date.getDate() > 9 ? on_date.getDate() : '0'+on_date.getDate();
         let month = on_date.getMonth()+1;
         let when = on_date.getFullYear() + '-' + month + '-' + day;
-        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers).then(res => {
+
+        /**
+         * when back parse date
+         * */
+        let onback_date = this.state.onback;
+        let dayback = onback_date.getDate() > 9 ? onback_date.getDate() : '0'+onback_date.getDate();
+        let monthback = onback_date.getMonth()+1;
+        let whenback = onback_date.getFullYear() + '-' + monthback + '-' + dayback;
+
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback).then(res => {
             console.log(res.data);
 
             if (!res.data.error){
@@ -1258,6 +1274,36 @@ class Finder extends React.Component{
                             <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +1 )}>Завтра</button>
                             <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +2)}>Послезавтра</button>
                         </div>
+                    </div>
+                    <div className="search-form__group search-form__group--white search-form__group--dateinput flex-1" style={{ display: this.state.goback ? 'block' : 'none' }}>
+                        <span>
+                            <span className="Styled__CalendarIcon-sc-1vjhvhi-1 cxBPDZ">
+                                <div
+                                className="form-field form-field--has-value form-field--datepicker" style={{zIndex: '450'}}>
+                                    <label
+                                        className="form-field__label"
+                                        htmlFor="on">
+                                        Дата обратно
+                                    </label>
+                                    <DayPickerInput
+                                        formatDate={formatDate}
+                                        parseDate={parseDate}
+                                        format="LL"
+                                        onDayChange={this.handleDayBackChange}
+                                        placeholder={`${formatDate(this.state.onback, 'LL', 'ru')}`}
+                                        dayPickerProps={{
+                                            locale: 'ru',
+                                            localeUtils: MomentLocaleUtils,
+                                        }}
+                                        value={this.state.onback}
+                                    />
+                            <span className="icon icon-info"></span>
+                                    <p
+                                        className="form-field__error">
+                                    </p>
+                                </div>
+                            </span>
+                        </span>
                     </div>
                     <div className="search-form__group search-form__group--passengers search-form__group--white">
                         <div className="" style={{position:'relative'}}>
