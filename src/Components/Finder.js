@@ -675,6 +675,24 @@ class Finder extends React.Component{
             toID : _fromID,
         });
     }
+    get
+    UNSAFE_componentWillMount() {
+        const root = document.getElementById('root');
+        const from_date = root.getAttribute('data-from');
+        const to_date = root.getAttribute('data-to');
+        if (from_date != '' && to_date != ''){
+            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getCityNameByCityID?cityID=' + from_date).then(res => {
+                this.setState({
+                    from : res.data
+                });
+            });
+            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getCityNameByCityID?cityID=' + to_date).then(res => {
+                this.setState({
+                    to : res.data
+                });
+            });
+        }
+    }
 
     componentDidMount() {
 
