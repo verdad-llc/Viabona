@@ -2,6 +2,8 @@ import React from 'react';
 import { Lines } from 'react-preloaders';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import Racedetailblock from './Racedetailblock';
+import Racedetailblockback from './Racedetailblockback';
 import '../Styles/style.css';
 import '../Styles/styleShowBlock.css';
 import '../Styles/teststyle.css';
@@ -27,6 +29,7 @@ class Finder extends React.Component{
         this.state = {
             from : 'Киев',
             showMe : true,
+            currency: 'UAH',
             modalUserProfileClass : "modal fade",
             modalUserProfileStyle : 'none',
             modalUserLoginClass : "modal fade",
@@ -129,6 +132,7 @@ class Finder extends React.Component{
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.infoBlockBack = this.infoBlockBack.bind(this);
         this.displayCalendar = this.displayCalendar.bind(this);
         this.handleChangeDate = this.handleChangeDate.bind(this);
         this.handleChangeDateArrow = this.handleChangeDateArrow.bind(this);
@@ -144,6 +148,7 @@ class Finder extends React.Component{
         this.subDataForAuth = this.subDataForAuth.bind(this);
         this.showBlockRegister = this.showBlockRegister.bind(this);
         this.showBlockLogin = this.showBlockLogin.bind(this);
+        this.handleChangeCurrency = this.handleChangeCurrency.bind(this);
         this.passInp = this.passInp.bind(this);
         this.sessionUser = this.sessionUser.bind(this);
         this.ticketsInfoFunction = this.ticketsInfoFunction.bind(this);
@@ -171,6 +176,11 @@ class Finder extends React.Component{
         this.pushphoneS = this.pushphoneS.bind(this);
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
+    }
+    handleChangeCurrency(e){
+        this.setState({
+            currency: e.target.value
+        })
     }
     handleSaveProfile(password = false){
         let $request = {
@@ -697,9 +707,13 @@ class Finder extends React.Component{
             });
     }
 
-    handleChangeDate(date){
+    handleChangeDate(date, fromDate = false){
         let newDate = new Date();
-        newDate.setDate(this.state.on.getDate() + date);
+        if (fromDate){
+            newDate.setDate(new Date().getDate() + date);
+        }else{
+            newDate.setDate(this.state.on.getDate() + date);
+        }
         this.setState({
             on: newDate
         });
@@ -728,8 +742,10 @@ class Finder extends React.Component{
     }
     handleSubmit(el){
        // console.log(el);
-        this.loadin();
-
+        //this.loadin();
+        this.setState({
+            loadingTwo: true
+        })
         let direct = this.state.direct ? this.state.direct : 0;
         let goback = this.state.goback ? this.state.goback : 0;
         let on_date = this.state.on;
@@ -749,10 +765,13 @@ class Finder extends React.Component{
         let monthback = onback_date.getMonth()+1;
         let whenback = onback_date.getFullYear() + '-' + monthback + '-' + dayback;
 
-        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback).then(res => {
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback + '&currency=' + this.state.currency).then(res => {
             console.log(res.data);
 
             if (!res.data.error){
+                this.setState({
+                    loadingTwo: false
+                })
                 this.setState({visibleCalendar : 'block'});
                 this.setState({
                     tripList : res.data,
@@ -812,6 +831,9 @@ class Finder extends React.Component{
 
             }else{
                 this.setState({
+                    loadingTwo: false
+                })
+                this.setState({
                 resErrorRace: true,
                 showByTic: 'none',
                 blockShow: 'none'
@@ -852,6 +874,13 @@ class Finder extends React.Component{
         console.log(e.target.value);
         let _InviteList = this.state.tripList;
         _InviteList[id].showDateil = !_InviteList[id].showDateil;
+        this.setState({tripList : _InviteList});
+    };
+    infoBlockBack = id => e => {
+        console.log(id);
+        console.log(e.target.value);
+        let _InviteList = this.state.tripList;
+        _InviteList[id].showDateil2 = !_InviteList[id].showDateil2;
         this.setState({tripList : _InviteList});
     };
 
@@ -1068,7 +1097,7 @@ class Finder extends React.Component{
 
                 {/* форма регистрации*/}
 
-                <div className={this.state.modalUserRegisterClass} id="modalUserLogin" tabIndex="-1" role="dialog"
+                <div className={this.state.modalUserRegisterClass} id="modalUserRegister" tabIndex="-1" role="dialog"
                      aria-labelledby="myModalLabel" aria-hidden="true"
                      style={{display: this.state.modalUserRegisterStyle}}>
                     <div className="modal-dialog" role="document">
@@ -1169,20 +1198,20 @@ class Finder extends React.Component{
                         </div>
                         <div className="next-date direct-switch">
                             <label htmlFor="material-switch">
-                                <span>только прямые рейсы</span>
+                                <span>искать с пересадками</span>
                                 <Switch
                                     checked={this.state.direct}
                                     onChange={this.handleDirectChange}
                                     onColor="#86d3ff"
                                     onHandleColor="#2693e6"
-                                    handleDiameter={30}
+                                    handleDiameter={14}
                                     name="direct"
                                     uncheckedIcon={false}
                                     checkedIcon={false}
                                     boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
                                     activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                    height={20}
-                                    width={48}
+                                    height={16}
+                                    width={40}
                                     className="react-switch"
                                     id="material-switch"
                                 />
@@ -1227,14 +1256,14 @@ class Finder extends React.Component{
                                     onChange={this.handleGoBackChange}
                                     onColor="#86d3ff"
                                     onHandleColor="#2693e6"
-                                    handleDiameter={30}
+                                    handleDiameter={14}
                                     name="goback"
                                     uncheckedIcon={false}
                                     checkedIcon={false}
                                     boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
                                     activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                    height={20}
-                                    width={48}
+                                    height={16}
+                                    width={40}
                                     className="react-switch"
                                     id="material-switch"
                                 />
@@ -1271,8 +1300,8 @@ class Finder extends React.Component{
                             </span>
                         </span>
                         <div className="next-date">
-                            <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +1 )}>Завтра</button>
-                            <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +2)}>Послезавтра</button>
+                            <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +1, new Date() )}>Завтра</button>
+                            <button className="next-date__btn" type="button" onClick={this.handleChangeDate.bind(this, +2, new Date())}>Послезавтра</button>
                         </div>
                     </div>
                     <div className="search-form__group search-form__group--white search-form__group--dateinput flex-1" style={{ display: this.state.goback ? 'block' : 'none' }}>
@@ -1331,6 +1360,12 @@ class Finder extends React.Component{
                                 </label>
 
                             </div>
+                        </div>
+                        <div className="next-date direct-switch">
+                            <select  name="currency" className="currency" value={this.state.currency} onChange={this.handleChangeCurrency} style={{display: 'none'}}>
+                                <option value="RUR">Рубли</option>
+                                <option value="UAH">Гривны</option>
+                            </select>
                         </div>
                     </div>
                     <div className="search-form__group search-form__group--submit">
@@ -1441,7 +1476,7 @@ class Finder extends React.Component{
                                             <p className='textPrice' style={{float: 'right'}}>{list.price} {list.currName}</p>
                                         </div>
                                         <div className='rightShowBlock'>
-                                            <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button>
+                                            {!this.state.goback ? <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button> : ''}
                                             <br/>
                                             <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
                                         </div>
@@ -1453,51 +1488,70 @@ class Finder extends React.Component{
                                 </div>
 
                             </div>
-                            {list.showDateil ?
-                                <div  className="detailsShow">
-                                    <div className="col flex">
-                                        <div><p>Отправление<br/>(местное время)</p></div>
-                                        <div>
-                                            {
-                                                list.trip_stop.forward.map((el, i) => {
-                                                    console.log(el.route[0].city);
-                                                    el.route.map((listen, ii) => {
-                                                        console.log(listen.city);
-                                                        pushme.push(listen);
-                                                    })
-                                                })
-
-                                            }
-
-                                            {pushme.map((el, kkey) => {
-                                                    if (el.city !== "") {
-                                                        return (<div className="stationBlock" key={kkey}>
-                                                            <div className="imgBlock">
-                                                                <div className="imgClass">
-                                                                </div>
-                                                                <div className="imgClassBot">
-
-                                                                </div>
-
-                                                            </div>
-                                                            <div>
-                                                                <p className="nameCityStation"> {el.city} </p>
-                                                                <span style={{}}></span>
-                                                                <p className="botStation"> {el.timeDep} </p>
-                                                                <span className="botStation"></span>
-                                                            </div>
-                                                        </div>)
-                                                    }
-                                                }
-                                            )}
+                                <Racedetailblock list={list}/>
+                            {/*end new show*/}
+                            {this.state.goback ?
+                                <div>
+                                <div className="showBlock" style={{display: this.state.blockShow, height: '233px'}}>
+                                    <hr style={{borderTop: '1px solid red'}}/>
+                                    <h4 style={{textAlign: 'center'}}>Обратный билет</h4>
+                                    <div className='upShowBlock'>
+                                        <div className='oneGridForShow'>
+                                            <div className='upOneGridForShow'>
+                                                <p className="timeShow">
+                                                    <Moment format="HH:MM" withTitle>
+                                                        {list.backDtDep}
+                                                    </Moment>
+                                                </p>
+                                                <div className="dataShow"> <Moment format="D MMM" withTitle>
+                                                    {list.backDtDep}
+                                                </Moment></div>
+                                                <div className="timeInRoad">{list.backWayTimeH} ч {list.backWayTimeM} мин. в пути</div>
+                                            </div>
+                                            <div className='upTwoGridForShow'>
+                                                <p className="cityName">{list.backStDepName}</p>
+                                                <br/>
+                                                <p>{list.backStDepAddr}</p>
+                                            </div>
+                                        </div>
+                                        <div className='twoGridForShow'>
+                                            <div className='upOneGridForShow'>
+                                                <p className="timeShow">
+                                                    <Moment format="HH:MM" withTitle>
+                                                        {list.backDtArr}
+                                                    </Moment>
+                                                </p>
+                                                <div className="dataShow"> <Moment format="D MMM" withTitle>
+                                                    {list.backDtArr}
+                                                </Moment></div>
+                                            </div>
+                                            <div className='upTwoGridForShow'>
+                                                <p className="cityName">{list.backStArrName}</p>
+                                                <br/>
+                                                <p>{list.backStArrAddr}</p>
+                                            </div>
+                                        </div>
+                                        <div className='threeGridForShow'>
+                                            <div className='leftShowBlock'>
+                                                <p className='textPrice' style={{float: 'right'}}>{list.backPrice} {list.currName}</p>
+                                            </div>
+                                            <div className='rightShowBlock'>
+                                                <button className="butTic" onClick={() => this.showByTic(list.fullPrice, list.currency, list.backRacename, list.backDtArr, list.backStArrName, list.backDtDep, list.backStDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button>
+                                                <br/>
+                                                <p className='textPass' style={{color: 'red'}}>{list.backPlaces} мест</p>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className='botShowBlock'>
+                                        <div className="col-md-2"><p className="trip__details__down" onClick={this.infoBlockBack(key)} style={{color: 'red'}}>Детали рейса</p></div>
+                                        <p style={{paddingBottom: "10px"}}>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
+                                    </div>
+
                                 </div>
-                                :
-                                null
-                            }
-                            {/*end new show*/}
+                                <Racedetailblockback list={list}/></div>
+                                : null}
                         </div>
+
                     )}
                 </div>
                 {/*блок авторизации и входа линый кабинет*/}

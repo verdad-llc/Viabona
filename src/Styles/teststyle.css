@@ -55,7 +55,8 @@
 .blockShow{
     position: relative;
     /*margin: auto auto auto auto;*/
-    margin-bottom: 20px;
+    margin-bottom: 65px;
+    padding-bottom: 27px;
     /*display: flex;*/
     /*margin-top: 20px;*/
     background-color: #f5f5f5;
@@ -689,3 +690,13 @@ button.close{float:right;}
     padding: 9px 23px;
     font-size:13px;
 }
+#modalUserRegister .form-control, #modalUserLogin .form-control{
+    height:30px;
+
+}
+#modalUserRegister label, #modalUserLogin label{
+    margin: 10px 0 10px;
+}
+select.currency{    color: black;
+    border-radius: 6px;
+    padding: 5px;}
