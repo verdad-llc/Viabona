@@ -345,3 +345,8 @@
         font-size: 1em;
     }
 }
+.fusion-fullwidth{
+    display: block;
+    box-sizing: border-box;
+
+}

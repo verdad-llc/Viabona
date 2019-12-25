@@ -39,14 +39,14 @@
 
 }
 .classPlus {
-    position: absolute;
+    position: relative;
     margin-left: -20px;
     margin-top: 20px;
     font-size: 1.2em;
     color: red;
 }
 .classMinus {
-    position: absolute;
+    position: relative;
     margin-left: -40px;
     margin-top: 20px;
     font-size: 1.2em;
@@ -192,7 +192,6 @@
     border-radius: 10px;
     margin: auto;
     width: 100%;
-    height: 210px;
     background-position: center;
 }
 .a{
@@ -226,7 +225,7 @@
 }
 .cabin {
     width: 100%;
-    height: 800px;
+    height: auto;
     margin-left: 400px;
     margin-top: 10px;
 }
@@ -679,7 +678,6 @@ button.close{float:right;}
     line-height: 1;
     color: #000;
     text-shadow: 0 1px 0 #fff;
-    opacity: .2;
     /* font: inherit; */
     font-size: 20px;
 }
@@ -700,3 +698,15 @@ button.close{float:right;}
 select.currency{    color: black;
     border-radius: 6px;
     padding: 5px;}
+#passengers{
+    height: 58px;
+    padding-bottom: 25px;
+    width: 93%;
+}
+.fusion-header-wrapper{
+    position: static;
+    z-index: 10010;
+}
+.modal-content{
+    margin-top: 80px;
+}

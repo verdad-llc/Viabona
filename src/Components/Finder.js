@@ -1198,7 +1198,7 @@ class Finder extends React.Component{
                                             renderItem={(item, highlighted) =>
                                                 <div
                                                     key={item.idCity}
-                                                    style={{ zIndex: '999000000000000000000000000000', backgroundColor: highlighted ? '#eee' : 'transparent'}}
+                                                    style={{ zIndex: '999000000000000000000000000000', backgroundColor: highlighted ? '#708090' : 'transparent', cursor:"pointer"}}
                                                 >
                                                     {item.nameCity}
                                                 </div>
@@ -1216,7 +1216,7 @@ class Finder extends React.Component{
                         </div>
                         <div className="next-date direct-switch">
                             <label htmlFor="material-switch">
-                                <span>искать с пересадками</span>
+                                <span>Искать с пересадками  </span>
                                 <Switch
                                     checked={this.state.direct}
                                     onChange={this.handleDirectChange}
@@ -1252,7 +1252,7 @@ class Finder extends React.Component{
                                             renderItem={(item, highlighted) =>
                                                 <div
                                                     key={item.idCity}
-                                                    style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
+                                                    style={{ backgroundColor: highlighted ? '#708090' : 'transparent', cursor:"pointer"}}
                                                 >
                                                     {item.nameCity}
                                                 </div>
@@ -1268,7 +1268,7 @@ class Finder extends React.Component{
                         </div>
                         <div className="next-date direct-switch">
                             <label htmlFor="material-switch">
-                                <span>в обе стороны</span>
+                                <span>В обе стороны  </span>
                                 <Switch
                                     checked={this.state.goback}
                                     onChange={this.handleGoBackChange}
@@ -1407,7 +1407,7 @@ class Finder extends React.Component{
                     </div>
                     <div className='mainBlockError'>
                         { this.state.resErrorRace ?
-                            <p className="errorSend"> к сожалению по вашему запросу не найдено рейсов в назначеную дату</p>
+                            <p className="errorSend"> К сожалению по вашему запросу не найдено рейсов в назначеную дату</p>
                             :
                             null
                         }
@@ -1575,7 +1575,7 @@ class Finder extends React.Component{
                 {/*блок авторизации и входа линый кабинет*/}
 
                 <div className="topFix">
-                    <button style={{display: this.state.showByTic}} onClick={this.backStup}>назад</button>
+                    <button style={{display: this.state.showByTic}} onClick={this.backStup}>Назад</button>
                 </div>
                 <div className="cabin" style={{display: this.state.showByTic}}>
                     <div className="checkout col-md-8">
@@ -1639,7 +1639,7 @@ class Finder extends React.Component{
                                                         <button type="button" className="btn free" tabIndex="-1">
                                                             <span><i className="icon icon-seat-v2"></i></span><span
                                                             className="verify-panel__picker-description">
-                                                            <p>количество мест: {this.state.passengers} </p>
+                                                            <p id={'seatsQuantity'}>  Количество мест: {this.state.passengers} </p>
                                                         </span>
                                                         </button>
                                                     </div>
@@ -1653,7 +1653,7 @@ class Finder extends React.Component{
                         <div className="checkout-panel checkout__customer"><p
                             className="checkout__customer-title">Информация о покупателе</p><p
                             className="checkout__customer-text">Указывайте корректные e-mail и номер телефона, т.к. они
-                            необходимы для идентификации пользователя, получения билета, возможности авторизации в ЛК и
+                            необходимы для идентификации пользователя, получения билета, возможности авторизации в Личном Кабинете и
                             возможности вернуть билет.</p>
                             <div className="checkout__customer-form">
                                 <div className="col-md-6 col-sm-6 col-xs-6"><label
@@ -1769,10 +1769,10 @@ class Finder extends React.Component{
                         <div className="checkout-panel checkout__customer"><p
                             className="checkout__customer-title">Информация о рейсе</p><p
                             className="checkout__customer-text">
-                            рейс: {this.state.tripInfForBy} <br/>
-                            отправление: {this.state.stDepAddrInfForBy}  <br/>
+                            Рейс: {this.state.tripInfForBy} <br/>
+                            Отправление: {this.state.stDepAddrInfForBy}  <br/>
                             {this.state.DepInfForBy} <br/>
-                            отправление: {this.state.stArrNameInfForBy}  <br/>
+                            Отправление: {this.state.stArrNameInfForBy}  <br/>
                             {this.state.ArrInfForBy}
                         </p>
 
