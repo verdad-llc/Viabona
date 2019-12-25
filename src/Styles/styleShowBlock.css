@@ -255,7 +255,9 @@
     .dataShow {
         width: 60px;
     }
-    .upOneGridForShow{}
+    .upOneGridForShow{
+
+    }
 }
 @media screen and (max-width:370px) {
     .blockShow{
