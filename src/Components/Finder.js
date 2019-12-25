@@ -69,6 +69,7 @@ class Finder extends React.Component{
             ticketsInfo: [],
             tripList: [],
             tripId: '',
+            nextDate: '',
             raceId: '',
             dataCalendar: [],
             //data for register
@@ -161,6 +162,7 @@ class Finder extends React.Component{
         this.CloseModalLogin = this.CloseModalLogin.bind(this);
         this.CloseModalRegister = this.CloseModalRegister.bind(this);
         this.showBlockTicketsFunction = this.showBlockTicketsFunction.bind(this);
+        this.setNextDate = this.setNextDate.bind(this);
         //заказ билета
         this.nameS = this.nameS.bind(this);
         this.passwordS = this.passwordS.bind(this);
@@ -745,6 +747,15 @@ class Finder extends React.Component{
             this.handleSubmit(this.state.on);
         });
     }
+    setNextDate(){
+        let newDate = this.state.nextDate;
+        //newDate.setDate(this.state.on.getDate() + date);
+        this.setState({
+            on: newDate
+        }, function(){
+            this.handleSubmit(this.state.on);
+        });
+    }
 
     handleDirectChange(direct){
         this.setState({ direct });
@@ -797,7 +808,7 @@ class Finder extends React.Component{
                 });
                 let dataCalendarTest = res.data[0].dtArr;
                 console.log(dataCalendarTest);
-                let arrActive = res.data[0].trip_stop.forward[0].depDates;
+             //   let arrActive = res.data[0].trip_stop.forward[0].depDates;
                 let arrDate = [];
                 //все даты
                 let allDay = [];
@@ -808,26 +819,26 @@ class Finder extends React.Component{
                     for (let i=0; i < 7; i++) {
 
                         let result = new Date(dataTwoTest);
-                            arrDate.push(new Date(result.getTime() + ((i - 3) * 86400000)));
+                            arrDate.push(new Date(result.getTime() + ((i - 4) * 86400000)));
                     }
 
                 };
                 //функция для извлечения дней из массивов
-                let findInArray = function(arrActive, arrDate) {
-                    for (let i=0; i < 7; i++) {
-                        let arrAll = arrDate[i];
-
-                        let Calendar =  new Date(arrActive[i]);
-                        let dayCall = Calendar.getDay();
-
-                        arrAll.getDay();
-
-                        allDay.push(dayCall);
-
-                    }
-                };
+                // let findInArray = function(arrActive, arrDate) {
+                //     for (let i=0; i < 7; i++) {
+                //         let arrAll = arrDate[i];
+                //
+                //         let Calendar =  new Date(arrActive[i]);
+                //         let dayCall = Calendar.getDay();
+                //
+                //         arrAll.getDay();
+                //
+                //         allDay.push(dayCall);
+                //
+                //     }
+                // };
                 funcDate(dataCalendarTest);
-                findInArray(arrActive, arrDate);
+                //findInArray(arrActive, arrDate);
                 let arrDate2 = [];
                 for (let i=0;i < arrDate.length;i++){
                     let stylingDateElement = {};
@@ -848,14 +859,20 @@ class Finder extends React.Component{
 
 
             }else{
-                this.setState({
-                    loadingTwo: false
-                })
-                this.setState({
-                resErrorRace: true,
-                showByTic: 'none',
-                blockShow: 'none'
-                })
+
+                axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTripsInfo?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback + '&currency=' + this.state.currency).then(res => {
+                    console.log(res.data);
+                    this.setState({
+                        resErrorRace: true,
+                        nextDate: new Date(res.data[0].depDates[0]),
+                        showByTic: 'none',
+                        blockShow: 'none'
+                    });
+                    this.setState({
+                        loadingTwo: false
+                    });
+                });
+
             }
         });
 
@@ -892,7 +909,11 @@ class Finder extends React.Component{
         console.log(e.target.value);
         let _InviteList = this.state.tripList;
         _InviteList[id].showDateil = !_InviteList[id].showDateil;
-        this.setState({tripList : _InviteList});
+        //alert(_InviteList[id].tripId);
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/stopTrip?tripId=' + _InviteList[id].tripId).then(res => {
+            _InviteList[id].trip_stop = res.data
+            this.setState({tripList : _InviteList});
+        });
     };
     infoBlockBack = id => e => {
         console.log(id);
@@ -1407,7 +1428,10 @@ class Finder extends React.Component{
                     </div>
                     <div className='mainBlockError'>
                         { this.state.resErrorRace ?
-                            <p className="errorSend"> К сожалению по вашему запросу не найдено рейсов в назначеную дату</p>
+                            <p className="errorSend"> К сожалению по вашему запросу не найдено рейсов в назначеную дату<br/>Следующий ближайший рейс от выбранной даты <a href="#" onClick={this.setNextDate} style={{cursor: 'pointer'}}>
+                                <Moment format="D MMMM" withTitle>
+                                    {this.state.nextDate}
+                                </Moment></a></p>
                             :
                             null
                         }

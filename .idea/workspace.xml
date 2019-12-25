@@ -4,6 +4,7 @@
     <list default="true" id="6c65944e-4a6e-476f-bfc5-02f2c6f2a1b3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Components/Finder.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Finder.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Components/Racedetailblock.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/Racedetailblock.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,8 +15,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -117,7 +118,14 @@
       <workItem from="1574925574929" duration="21347000" />
       <workItem from="1575011302535" duration="18629000" />
       <workItem from="1575110545846" duration="15138000" />
-      <workItem from="1575375584738" duration="9018000" />
+      <workItem from="1575375584738" duration="9653000" />
+      <workItem from="1575879350224" duration="10329000" />
+      <workItem from="1576135758929" duration="4656000" />
+      <workItem from="1576575503376" duration="2511000" />
+      <workItem from="1576748508569" duration="10763000" />
+      <workItem from="1577089234551" duration="3130000" />
+      <workItem from="1577181629073" duration="8000" />
+      <workItem from="1577262124669" duration="10053000" />
     </task>
     <servers />
   </component>
@@ -142,8 +150,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/Components/Finder.js</url>
-          <line>606</line>
+          <line>729</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/Components/Finder.js</url>
+          <line>970</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/Components/Finder.js</url>
+          <line>974</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
