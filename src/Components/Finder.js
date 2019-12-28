@@ -32,6 +32,9 @@ class Finder extends React.Component{
             currency: 'UAH',
             modalUserProfileClass : "modal fade",
             modalUserProfileStyle : 'none',
+            resErrorRace2 : false,
+            noPlaceNum : 1,
+            showSeatsBlock : false,
             modalUserLoginClass : "modal fade",
             modalUserLoginStyle : 'none',
             modalUserRegisterClass : "modal fade",
@@ -66,6 +69,8 @@ class Finder extends React.Component{
             onback : new Date(),
             passengers : '1',
             cityList: [],
+            matrix: [],
+            seatsSelect: [],
             ticketsInfo: [],
             tripList: [],
             tripId: '',
@@ -120,13 +125,17 @@ class Finder extends React.Component{
             arrForOctobBy: [],
             userAr: [],
             nameSBlockClass: 'form-group',
+            seatBlockClass: 'form-group',
             surnameSBlockClass: 'form-group',
             phoneSBlockClass: 'form-group',
             emailsBlockClass: 'form-group',
             nameSErrorBlock: 'none',
+            seatErrorBlock: 'none',
             surnameSErrorBlock: 'none',
             phoneSErrorBlock: 'none',
             emailSErrorBlock: 'none',
+            seatsRows: 0,
+            seatsColumns: 0,
 
 
 
@@ -139,6 +148,7 @@ class Finder extends React.Component{
         this.handleChangeDateArrow = this.handleChangeDateArrow.bind(this);
         this.handleReverseCities = this.handleReverseCities.bind(this);
         this.handleDirectChange = this.handleDirectChange.bind(this);
+        this.selectPlace = this.selectPlace.bind(this);
         this.handleGoBackChange = this.handleGoBackChange.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
         this.handleDayBackChange = this.handleDayBackChange.bind(this);
@@ -168,6 +178,7 @@ class Finder extends React.Component{
         this.passwordS = this.passwordS.bind(this);
         this.password2S = this.password2S.bind(this);
         this.surnameS = this.surnameS.bind(this);
+        this.showSeats = this.showSeats.bind(this);
         this.emailS = this.emailS.bind(this);
         this.phoneS = this.phoneS.bind(this);
         this.showByTic = this.showByTic.bind(this);
@@ -179,6 +190,63 @@ class Finder extends React.Component{
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
     }
+    selectPlace(placeArray, row, place) {
+        if (!placeArray.free || placeArray.svc) {
+            return false;
+        }
+        // console.log('Ряд:' + row);
+        // console.log('Место:' + place);
+        // console.log('Место:' + placeArray.n);
+        // console.log('Место в матрице:' + this.state.matrix[0][row][place].n);
+
+            let passengersQuantity = this.state.passengers;
+            let seatsSelect = this.state.seatsSelect;
+            let _matrix = this.state.matrix;
+
+
+
+        //    function setSelect (){
+                _matrix[0][row][place].selected = 1;
+
+
+                seatsSelect.push({'placeArray' : _matrix[0][row][place], 'row': row, 'place': place});
+                if(seatsSelect.length > passengersQuantity){
+                    seatsSelect.splice(0, passengersQuantity);
+                }
+        _matrix[0].forEach(function(item, index, array) {
+                    item.forEach(function(it, ind, arr){
+                        _matrix[0][index][ind].selected = false;
+                    });
+        });
+        seatsSelect.map((el, i) => {
+            _matrix[0][el.row][el.place].selected = 1;
+        });
+        this.setState({
+            matrix: _matrix,
+            seatsSelect: seatsSelect,
+        });
+                // console.log(seatsSelect);
+                // console.log(seatsSelect.length);
+                // console.log(passengersQuantity);
+          //  }
+          //  setSelect();
+           // console.log(seatsSelect);
+
+
+
+
+        // _matrix[0][row][place].selected = 1;
+        // this.setState({
+        //             matrix: _matrix,
+        //         }, () => {
+        //             //console.log(this.state.matrix);
+        //             console.log(this.state.matrix.length);
+        //         });
+
+
+    }
+
+
     handleChangeCurrency(e){
         this.setState({
             currency: e.target.value
@@ -226,6 +294,15 @@ class Finder extends React.Component{
                 nameSErrorBlock:'block',
                 nameSBlockClass: 'form-group has-error',
             });
+        }
+        if(this.state.noPlaceNum === 0) {
+            if (this.state.passengers != this.state.seatsSelect.length){
+                this.setState({
+                        showSeatsBlock: true,
+                    seatErrorBlock:'block',
+                    seatBlockClass: 'form-group has-error',
+                    });
+            }
         }
         if(this.state.surnameS == ''){
             we_can_go = false;
@@ -289,7 +366,7 @@ class Finder extends React.Component{
         console.log(this.state.infForLiq, this.state.lengPass);
         axios({
             method: 'post',
-            url: 'http://new.viabona.com.ua/api/index.php/api/pay/pay?amount=' + this.state.priceBy + '&currency=' + this.state.arrTic.currency + '&description=' + name + surname + '&id=' + this.state.tripId + '&raceId' + this.state.raceId,
+            url: 'http://new.viabona.com.ua/api/index.php/api/pay/pay',
             data: {
                 state: this.state
             }
@@ -349,14 +426,44 @@ class Finder extends React.Component{
         }
         this.setState({userAr:userAr});
 
-
-
-
         console.log(lengPass);
-
-
-
         console.log(this.state.arrTic);
+
+        let tripMatrix = this.state.matrix;
+       // console.log(tripMatrix);
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/tripMatrix?tripId=' + tripId).then(res => {
+            //tripMatrix.matrix = res.data;
+           // console.log(res.data[0].busTempl);
+            this.setState({
+                noPlaceNum : parseInt(res.data[0].noPlaceNum)
+            });
+            if (parseInt(res.data[0].noPlaceNum) === 1){
+                this.setState({showSeatsBlock:'none'});
+            }else{
+                this.setState({matrix : res.data[0].busTempl.matrix});
+                this.setState({seatsRows : res.data[0].busTempl.size[0].x});
+                this.setState({seatsColumns : res.data[0].busTempl.size[0].y});
+                console.log(this.state.seatsRows);
+                console.log(this.state.seatsColumns);
+            }
+
+        });
+    }
+    showSeats(matrix) {
+        if(this.state.noPlaceNum === 1) {return false};
+        console.log(matrix[0]);
+        matrix[0].map((el, i) => {
+            console.log(el+'array');
+
+            el.map((ryad, ii) => {
+                console.log('asd'+ryad);
+                return (
+                    <div style={{ border: '1px solid black', padding: '5px'}}>{ryad.n}</div>
+                )
+            });
+            return (<br/>)
+        })
+        this.setState({showSeatsBlock: !this.state.showSeatsBlock});
     }
     pushnameS = id=> e => {
         console.log(id);
@@ -540,12 +647,12 @@ class Finder extends React.Component{
                 erName: 'errorName'
             });
         }
-        if(this.state.email.length < 8 ) {
+      /*  if(this.state.email.length < 8 ) {
             canSentForm = false;
             this.setState({
                 erEmail: 'errorEmail'
             });
-        }
+        }*/
         if(this.state.phone.length < 8 ) {
             canSentForm = false;
             this.setState({
@@ -861,16 +968,27 @@ class Finder extends React.Component{
             }else{
 
                 axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTripsInfo?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback + '&currency=' + this.state.currency).then(res => {
-                    console.log(res.data);
-                    this.setState({
-                        resErrorRace: true,
-                        nextDate: new Date(res.data[0].depDates[0]),
-                        showByTic: 'none',
-                        blockShow: 'none'
-                    });
-                    this.setState({
-                        loadingTwo: false
-                    });
+                    if(res.data.error && res.data.error.code == 'E_NODATA'){
+                        this.setState({
+                            resErrorRace2: res.data.error.name,
+                            showByTic: 'none',
+                            blockShow: 'none'
+                        });
+                        this.setState({
+                            loadingTwo: false
+                        });
+                    }else{
+                        this.setState({
+                            resErrorRace: true,
+                            nextDate: new Date(res.data[0].depDates[0]),
+                            showByTic: 'none',
+                            blockShow: 'none'
+                        });
+                        this.setState({
+                            loadingTwo: false
+                        });
+                    }
+
                 });
 
             }
@@ -920,6 +1038,10 @@ class Finder extends React.Component{
         console.log(e.target.value);
         let _InviteList = this.state.tripList;
         _InviteList[id].showDateil2 = !_InviteList[id].showDateil2;
+        axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/stopTrip?tripId=' + _InviteList[id].backTripId).then(res => {
+            _InviteList[id].trip_stop_back = res.data;
+            this.setState({tripList : _InviteList});
+        });
         this.setState({tripList : _InviteList});
     };
 
@@ -1112,7 +1234,7 @@ class Finder extends React.Component{
                             </div>
                             <div className="modal-body">
                                 <div className="form-group">
-                                    <label htmlFor="loginAuth">Логин:</label>
+                                    <label htmlFor="loginAuth">E-mail:</label>
                                     <input className="form-control" id="loginAuth"  type="text"  name="loginAuth" value={this.state.loginAuth} onChange={this.handleChange}/>
                                     <label htmlFor="passwordAuth">Пароль:</label>
                                     <input className="form-control" type="password" name="passwordAuth" value={this.state.passwordAuth} onChange={this.handleChange}/>
@@ -1150,8 +1272,8 @@ class Finder extends React.Component{
                             </div>
                             <div className="modal-body">
                                 <div className="form-group">
-                                    <label htmlFor="login">Логин:</label>
-                                    <input placeholder="Логин" id="login" type="text" className="form-control {this.state.errorLogin}" name="login" value={this.state.login} onChange={this.handleChange}/>
+                                    <label htmlFor="login">E-mail:</label>
+                                    <input placeholder="email@gmail.com" id="login" type="text" className="form-control {this.state.errorLogin}" name="login" value={this.state.login} onChange={this.handleChange}/>
                                     <p className={this.state.erLogin}>не коректно введен логин </p>
 
                                     <label htmlFor="password">Пароль:</label>
@@ -1159,9 +1281,9 @@ class Finder extends React.Component{
                                     <p className={this.state.erPassword}>не коректный пароль</p>
 
 
-                                    <label htmlFor="email">Email:</label>
-                                    <input placeholder="email@gmail.com" className="form-control {this.state.erEmail}" type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
-                                    <p className={this.state.erEmail}>Введите емеил коректно</p>
+                                    <label htmlFor="email" style={{display:'none'}}>Email:</label>
+                                    <input style={{display:'none'}} placeholder="email@gmail.com" className="form-control {this.state.erEmail}" type="text" name="email" value={this.state.email} onChange={this.handleChange}/>
+                                    <p style={{display:'none'}} className={this.state.erEmail}>Введите емеил коректно</p>
 
 
                                     <label htmlFor="nameTest">Имя:</label>
@@ -1435,6 +1557,11 @@ class Finder extends React.Component{
                             :
                             null
                         }
+                        { this.state.resErrorRace2 ?
+                            <p className="errorSend"> {this.state.resErrorRace2} </p>
+                            :
+                            null
+                        }
                     </div>
                     <div className="blockCalender"  style={{display: this.state.blockShow}}>
 
@@ -1659,13 +1786,32 @@ class Finder extends React.Component{
                                         <div className="row-slim">
                                             <div>
                                                 <div className="verify-panel__picker">
-                                                    <div className="verify-panel__picker-btn disabled">
-                                                        <button type="button" className="btn free" tabIndex="-1">
+                                                    <div className={'verify-panel__picker-btn enabled ' + this.state.seatBlockClass}>
+                                                        <button  className="btn free" onClick={this.showSeats.bind(this,this.state.matrix)}>
                                                             <span><i className="icon icon-seat-v2"></i></span><span
                                                             className="verify-panel__picker-description">
                                                             <p id={'seatsQuantity'}>  Количество мест: {this.state.passengers} </p>
                                                         </span>
                                                         </button>
+                                                        <label  style={{display: this.state.seatErrorBlock}} className="error control-label"
+                                                                htmlFor="none">Выберите места!</label>
+                                                    </div>
+                                                    <div className="thereMatrix" style={{display: this.state.showSeatsBlock ? 'grid' : 'none', grid:'repeat(this.state.seatsRows,5px) / repeat(this.state.seatsColumns,5px)', width:'100vw'}}>
+                                                        {this.state.matrix[0] ? this.state.matrix[0].map((el, i) => {
+                                                            console.log(el+'array');
+                                                            return (
+                                                                <div key={i}>
+                                                                    {el.map((ryad, ii) => {
+                                                                console.log('asd'+ryad);
+                                                                return (
+                                                                    <div onClick={this.selectPlace.bind(this, ryad, i, ii)} key={ii} style={{border: ryad.selected ? '1px solid green' : '1px solid black', padding: '5px', textAlign: 'center',
+                                                                     margin: '3px', width: '28px', float:'left', cursor: ryad.free ? 'pointer' : 'no-drop', color: ryad.free ? 'black' : 'gray', backgroundColor: ryad.selected ? 'green' : 'white',
+                                                                    }}>{ryad.n}</div>
+                                                                )
+                                                            })}
+                                                            <br/>
+                                                                        </div>)
+                                                        }) : ''}
                                                     </div>
                                                 </div>
                                             </div>
