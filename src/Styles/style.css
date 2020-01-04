@@ -2760,7 +2760,7 @@ a.badge:focus, a.badge:hover {
 }
 
 .modal-content {
-    position: relative;
+    position: inherit;
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #999;
@@ -2768,7 +2768,10 @@ a.badge:focus, a.badge:hover {
     border-radius: 6px;
     -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
     box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-    outline: 0
+    outline: 0;
+    margin-top: 80px;
+    overflow-y: scroll;
+
 }
 
 .modal-backdrop {
@@ -2793,7 +2796,8 @@ a.badge:focus, a.badge:hover {
 
 .modal-header {
     padding: 15px;
-    border-bottom: 1px solid #e5e5e5
+    border-bottom: 1px solid #e5e5e5;
+    position: relative;
 }
 
 .modal-header:after, .modal-header:before {
@@ -2815,14 +2819,14 @@ a.badge:focus, a.badge:hover {
 }
 
 .modal-body {
-    position: relative;
     padding: 15px
 }
 
 .custom-modal-footer, .modal-footer {
     padding: 15px;
     text-align: right;
-    border-top: 1px solid #e5e5e5
+    border-top: 1px solid #e5e5e5;
+    position: absolute;
 }
 
 .custom-modal-footer:after, .custom-modal-footer:before, .modal-footer:after, .modal-footer:before {

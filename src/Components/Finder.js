@@ -70,6 +70,7 @@ class Finder extends React.Component{
             passengers : '1',
             cityList: [],
             matrix: [],
+            promoArr: [],
             seatsSelect: [],
             ticketsInfo: [],
             tripList: [],
@@ -124,6 +125,7 @@ class Finder extends React.Component{
             inflengPass: [],
             arrForOctobBy: [],
             userAr: [],
+            promoInput: "",
             nameSBlockClass: 'form-group',
             seatBlockClass: 'form-group',
             surnameSBlockClass: 'form-group',
@@ -185,6 +187,8 @@ class Finder extends React.Component{
         this.backStup =  this.backStup.bind(this);
         this.PayArr = this.PayArr.bind(this);
         this.loadin = this.loadin.bind(this);
+        this.promocodeRequest = this.promocodeRequest.bind(this);
+        this.prePromocodeRequest = this.prePromocodeRequest.bind(this);
         this.pushnameS = this.pushnameS.bind(this);
         this.pushphoneS = this.pushphoneS.bind(this);
         this.pushsurnameS = this.pushsurnameS.bind(this);
@@ -448,6 +452,40 @@ class Finder extends React.Component{
             }
 
         });
+
+
+        // let buyerlogin = this.state.buyerlogin;
+        // let buyerloginLogin = this.state.buyerlogin;
+        // axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyerlogin?login=' + this.state.loginAuth + '&password=' + this.state.passwordAuth).then(res => {
+        //         this.setState({
+        //             //buyerlogin: res.data,
+        //             buyerloginLogin: res.data.id,
+        //             }
+        //         );
+        //         //console.log(buyerlogin);
+        //         console.log(buyerloginLogin);
+        //         //console.log(this.state.buyerlogin);
+        // });
+    }
+    prePromocodeRequest(e) {
+        let promoInput = this.state.promoInput;
+        this.setState({
+            promoInput: e.target.value,
+        });
+        console.log(promoInput);
+    }
+     promocodeRequest() {
+        // let promoArr = this.state.promoArr;
+        if (this.state.userID === 0){return alert('At first u have to register or enter');}
+            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/checkPromo?tripId=' + this.state.tripId + '&buyerid=' + this.state.userID + '&promocode=' + this.state.promoInput).then(res => {
+                this.setState({
+                    promoArr: res.data,
+                });
+            });
+            //console.log(promoArr);
+            return console.log(this.state.promoArr);
+
+
     }
     showSeats(matrix) {
         if(this.state.noPlaceNum === 1) {return false};
@@ -1652,7 +1690,7 @@ class Finder extends React.Component{
                                     </div>
                                 </div>
                                 <div className='botShowBlock'>
-                                    <div className="col-md-2"><p className="trip__details__down" onClick={this.infoBlock(key)} style={{color: 'red'}}>Детали рейса</p></div>
+                                    <div className="col-md-2"><br/><br/><p className="trip__details__down" onClick={this.infoBlock(key)} style={{color: 'red'}}>Детали рейса</p></div>
                                     <p style={{paddingBottom: "10px"}}>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
                                 </div>
 
@@ -1796,7 +1834,7 @@ class Finder extends React.Component{
                                                         <label  style={{display: this.state.seatErrorBlock}} className="error control-label"
                                                                 htmlFor="none">Выберите места!</label>
                                                     </div>
-                                                    <div className="thereMatrix" style={{display: this.state.showSeatsBlock ? 'grid' : 'none', grid:'repeat(this.state.seatsRows,5px) / repeat(this.state.seatsColumns,5px)', width:'100vw'}}>
+                                                    <div className="thereMatrix" style={{display: this.state.showSeatsBlock ? 'grid' : 'none', grid:'repeat(this.state.seatsRows,5px) / repeat(this.state.seatsColumns,5px)'}}>
                                                         {this.state.matrix[0] ? this.state.matrix[0].map((el, i) => {
                                                             console.log(el+'array');
                                                             return (
@@ -1950,6 +1988,9 @@ class Finder extends React.Component{
                         </div>
                         <div className="checkout-panel checkout__payment">
                             <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy}</div>
+                            <div className="checkout__payment-promo">
+                                <form onSubmit={this.promocodeRequest}><input type="text" onChange={this.prePromocodeRequest} value={this.promoInput}/><button className="promoButton" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}>Ok</button></form>
+                            </div>
                             <div className="checkout__payment-info">
                                 <div className="checkout__payment-info-text">Ваши платежные и личные данные надежно
                                     защищены в соответствии с международными стандартами безопасности.

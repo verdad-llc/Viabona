@@ -204,9 +204,8 @@
 }
 .myCab{
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    display: block;
+    box-sizing: border-box;
 }
 .textCab {
     width: 100%;
@@ -707,6 +706,13 @@ select.currency{    color: black;
     position: static;
     z-index: 10010;
 }
-.modal-content{
-    margin-top: 80px;
+.col-md-2{
+    width: 50%;
+}
+p.trip__details__down {
+    text-align: left;
+    padding-bottom: 3vh;
+}
+.promoButton{
+    border-radius: 10px;
 }
