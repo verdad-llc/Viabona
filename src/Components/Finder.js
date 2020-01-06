@@ -35,6 +35,7 @@ class Finder extends React.Component{
             resErrorRace2 : false,
             noPlaceNum : 1,
             showSeatsBlock : false,
+            showRegOffer : false,
             modalUserLoginClass : "modal fade",
             modalUserLoginStyle : 'none',
             modalUserRegisterClass : "modal fade",
@@ -472,20 +473,21 @@ class Finder extends React.Component{
         this.setState({
             promoInput: e.target.value,
         });
-        console.log(promoInput);
+        //console.log(promoInput);
     }
      promocodeRequest() {
-        // let promoArr = this.state.promoArr;
-        if (this.state.userID === 0){return alert('At first u have to register or enter');}
+         //let promoArr = this.state.promoArr;
+        if (this.state.userID === 0){this.setState({showRegOffer: !this.state.showRegOffer});}
+        else if(this.state.userID !== 0) {
             axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/checkPromo?tripId=' + this.state.tripId + '&buyerid=' + this.state.userID + '&promocode=' + this.state.promoInput).then(res => {
                 this.setState({
                     promoArr: res.data,
                 });
+                console.log(this.state.promoArr);
             });
             //console.log(promoArr);
-            return console.log(this.state.promoArr);
 
-
+        }
     }
     showSeats(matrix) {
         if(this.state.noPlaceNum === 1) {return false};
@@ -1989,10 +1991,11 @@ class Finder extends React.Component{
                         <div className="checkout-panel checkout__payment">
                             <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy}</div>
                             <div className="checkout__payment-promo">
-                                <form onSubmit={this.promocodeRequest}><input type="text" onChange={this.prePromocodeRequest} value={this.promoInput}/><button className="promoButton" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}>Ok</button></form>
+                                <form onSubmit={this.promocodeRequest}><input type="text" onChange={this.prePromocodeRequest} value={this.promoInput}/><button className="promoButton" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}>OK</button></form>
+                            <div style={{color:'red', display: this.state.showRegOffer ? 'block' : 'none'}}> Невозможно определить покупателя.Возможно Вы не зарегистирированы в системе,либо не осуществили вход<br/></div>
                             </div>
                             <div className="checkout__payment-info">
-                                <div className="checkout__payment-info-text">Ваши платежные и личные данные надежно
+                                <div className="checkout__payment-info-text"><br/>Ваши платежные и личные данные надежно
                                     защищены в соответствии с международными стандартами безопасности.
                                 </div>
                                 <div className="checkout__payment-info-icons">

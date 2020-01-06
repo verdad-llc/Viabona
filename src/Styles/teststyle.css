@@ -714,5 +714,7 @@ p.trip__details__down {
     padding-bottom: 3vh;
 }
 .promoButton{
-    border-radius: 10px;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 5px 5px 5px 0;
 }
