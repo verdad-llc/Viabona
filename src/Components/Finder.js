@@ -112,6 +112,7 @@ class Finder extends React.Component{
             arrBy: {},
             infForLiq: [],
             priceBy: '',
+            promoCodeName: '',
             currNameBy: '',
             resErrorRace: false,
             tripInfForBy: '',
@@ -152,6 +153,7 @@ class Finder extends React.Component{
         this.handleReverseCities = this.handleReverseCities.bind(this);
         this.handleDirectChange = this.handleDirectChange.bind(this);
         this.selectPlace = this.selectPlace.bind(this);
+        this.changePromocode = this.changePromocode.bind(this);
         this.handleGoBackChange = this.handleGoBackChange.bind(this);
         this.handleDayChange = this.handleDayChange.bind(this);
         this.handleDayBackChange = this.handleDayBackChange.bind(this);
@@ -194,6 +196,11 @@ class Finder extends React.Component{
         this.pushphoneS = this.pushphoneS.bind(this);
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
+    }
+    changePromocode(el){
+        this.setState({
+            promoInput: el.value
+        });
     }
     selectPlace(placeArray, row, place) {
         if (!placeArray.free || placeArray.svc) {
@@ -477,12 +484,24 @@ class Finder extends React.Component{
     }
      promocodeRequest() {
          //let promoArr = this.state.promoArr;
-        if (this.state.userID === 0){this.setState({showRegOffer: !this.state.showRegOffer});}
-        else if(this.state.userID !== 0) {
-            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/checkPromo?tripId=' + this.state.tripId + '&buyerid=' + this.state.userID + '&promocode=' + this.state.promoInput).then(res => {
+         console.log(localStorage);
+        if (!localStorage.userID){this.setState({showRegOffer: false});}
+        else if(localStorage.userID) {
+            let user_id = localStorage.userID;
+            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/checkPromo?tripId=' + this.state.tripId + '&buyerid=' + user_id + '&promocode=' + this.state.promoInput).then(res => {
                 this.setState({
                     promoArr: res.data,
+                    showRegOffer: false,
                 });
+                if (res.data[0].applicable === 1){
+                    let new_price = parseFloat(res.data[0].autoLgot.price);
+                    new_price = new_price * parseInt(this.state.passengers);
+                    this.setState({
+                        priceBy: new_price,
+                        promoCodeName: "Использовано: " + res.data[0].autoLgot.name,
+                    });
+
+                }
                 console.log(this.state.promoArr);
             });
             //console.log(promoArr);
@@ -1989,9 +2008,18 @@ class Finder extends React.Component{
 
                         </div>
                         <div className="checkout-panel checkout__payment">
-                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy}</div>
+                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy} <br/><span style={{fontSize:'14px',color:'red'}}>{this.state.promoCodeName}</span></div>
                             <div className="checkout__payment-promo">
-                                <form onSubmit={this.promocodeRequest}><input type="text" onChange={this.prePromocodeRequest} value={this.promoInput}/><button className="promoButton" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}>OK</button></form>
+                                <label htmlFor="promoInput">Введите промокод</label>
+                                    <input type="text"
+                                           name="promoInput"
+                                           id="promoInput"
+                                           onChange={this.handleChange}
+                                           value={this.state.promoInput}
+                                    /><button onClick={this.promocodeRequest}
+                                              className="promoButton"
+                                              type="submit"
+                                              style={{backgroundColor: 'white', border: '1px solid black'}}>OK</button>
                             <div style={{color:'red', display: this.state.showRegOffer ? 'block' : 'none'}}> Невозможно определить покупателя.Возможно Вы не зарегистирированы в системе,либо не осуществили вход<br/></div>
                             </div>
                             <div className="checkout__payment-info">
