@@ -55,7 +55,7 @@ class Raceblock extends React.Component{
                             <div className='rightShowBlock'>
                                 <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button>
                                 <br/>
-                                <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
+                                <p className='textPass' style={{color: '#D50707'}}>{list.places} мест</p>
                             </div>
                         </div>
                     </div>

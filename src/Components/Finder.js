@@ -2,6 +2,8 @@ import React from 'react';
 import { Lines } from 'react-preloaders';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import Offerblock from './Offerblock.jsx';
+import Offerdetailblock from './Offerdetailblock.jsx';
 import Racedetailblock from './Racedetailblock';
 import Racedetailblockback from './Racedetailblockback';
 import '../Styles/style.css';
@@ -22,6 +24,7 @@ import Switch from "react-switch";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 
+
 class Finder extends React.Component{
     constructor(props){
 
@@ -36,12 +39,15 @@ class Finder extends React.Component{
             noPlaceNum : 1,
             showSeatsBlock : false,
             showRegOffer : false,
+            offerShow : false,
             modalUserLoginClass : "modal fade",
             modalUserLoginStyle : 'none',
             modalUserRegisterClass : "modal fade",
             modalUserRegisterStyle : 'none',
             modalUserTicketsClass : "modal fade",
+            modalUserTicketsClassTwo : "modal fade",
             modalUserTicketsStyle : 'none',
+            modalUserTicketsStyleTwo : 'none',
             fromID : 2,
             displayLogin : 'none',
             errorLogin : '',
@@ -66,15 +72,18 @@ class Finder extends React.Component{
             displayCalendar : 'none',
             showByTic: 'none',
             blockShow: 'block',
+            offerCheckItUp: 'block',
             on : new Date(),
             onback : new Date(),
             passengers : '1',
             cityList: [],
             matrix: [],
+            ButtonClassName: 'Styled__ResettedButton-sc-1dxewfu-0 Styled__ColoredButton-sc-1dxewfu-1 Styled__SizedButton-sc-1dxewfu-2 Styled__StyledButton-sc-1dxewfu-3 iqrXFx form-field__submit',
             promoArr: [],
             seatsSelect: [],
             ticketsInfo: [],
             tripList: [],
+            tripListTwo: [],
             tripId: '',
             nextDate: '',
             raceId: '',
@@ -109,21 +118,31 @@ class Finder extends React.Component{
             phoneS: "",
             //end session
             arrTic: {},
+            arrTicTwo: [],
             arrBy: {},
             infForLiq: [],
             priceBy: '',
             promoCodeName: '',
             currNameBy: '',
             resErrorRace: false,
+            sortMenu: false,
             tripInfForBy: '',
             stDepAddrInfForBy: '',
             stArrNameInfForBy: '',
             DepInfForBy: '',
             ArrInfForBy: '',
+            DepSort: '',
+            ArrSort: '',
+            wayTimeSort: '',
             lengPass: [],
             butPayTic: "",
+            butPayTicTwo: "",
             showButPayTic: false,
+            checkboxOffer: false,
+            showButPayTicTwo: false,
+            forSortDownAndUp: false,
             showBuyNext: true,
+            showBuyNextTwo: true,
             inflengPass: [],
             arrForOctobBy: [],
             userAr: [],
@@ -140,13 +159,30 @@ class Finder extends React.Component{
             emailSErrorBlock: 'none',
             seatsRows: 0,
             seatsColumns: 0,
+            buyId: '',
+            buyIdTwo: '',
+            reserveObj: [],
+            reserveObjInfo: [],
+            reserveObjInfoExtended: [],
+            mSum: [],
+            confirmReserveObj: [],
+            orderObj: [],
+            lgot: "",
+            ticketId: "",
+            ticketIdT: [],
+            offer: '',
+            showDetails : '',
+            showFindBlock: true,
+            
 
 
 
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleCheck = this.handleCheck.bind(this);
+        this.handleOffer = this.handleOffer.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.infoBlockBack = this.infoBlockBack.bind(this);
+        this.infoBlockBack = this.infoBlockBack.bind(this);        
         this.displayCalendar = this.displayCalendar.bind(this);
         this.handleChangeDate = this.handleChangeDate.bind(this);
         this.handleChangeDateArrow = this.handleChangeDateArrow.bind(this);
@@ -168,15 +204,18 @@ class Finder extends React.Component{
         this.passInp = this.passInp.bind(this);
         this.sessionUser = this.sessionUser.bind(this);
         this.ticketsInfoFunction = this.ticketsInfoFunction.bind(this);
+        this.ticketsInfoFunctionTwo = this.ticketsInfoFunctionTwo.bind(this);
         this.handleSaveProfile = this.handleSaveProfile.bind(this);
         this.dataSessionUser = this.dataSessionUser.bind(this);
         this.deleteLocal = this.deleteLocal.bind(this);
         this.showBlockProfileFunction = this.showBlockProfileFunction.bind(this);
         this.CloseModalUserProfile = this.CloseModalUserProfile.bind(this);
         this.CloseModalUserTickets = this.CloseModalUserTickets.bind(this);
+        this.CloseModalUserTicketsTwo = this.CloseModalUserTicketsTwo.bind(this);
         this.CloseModalLogin = this.CloseModalLogin.bind(this);
         this.CloseModalRegister = this.CloseModalRegister.bind(this);
         this.showBlockTicketsFunction = this.showBlockTicketsFunction.bind(this);
+        this.showBlockTicketsFunctionTwo = this.showBlockTicketsFunctionTwo.bind(this);
         this.setNextDate = this.setNextDate.bind(this);
         //заказ билета
         this.nameS = this.nameS.bind(this);
@@ -189,13 +228,253 @@ class Finder extends React.Component{
         this.showByTic = this.showByTic.bind(this);
         this.backStup =  this.backStup.bind(this);
         this.PayArr = this.PayArr.bind(this);
+        this.PayArrTwo = this.PayArrTwo.bind(this);
         this.loadin = this.loadin.bind(this);
         this.promocodeRequest = this.promocodeRequest.bind(this);
         this.prePromocodeRequest = this.prePromocodeRequest.bind(this);
+        this.sortDepartureUp = this.sortDepartureUp.bind(this);
+        this.sortDepartureDown = this.sortDepartureDown.bind(this);
+        this.sortArriveUp = this.sortArriveUp.bind(this);
+        this.sortArriveDown = this.sortArriveDown.bind(this);
+        this.sortWayTimeUp = this.sortWayTimeUp.bind(this);
+        this.sortWayTimeDown = this.sortWayTimeDown.bind(this);
+        this.sortPriceUp = this.sortPriceUp.bind(this);
+        this.sortPriceDown = this.sortPriceDown.bind(this);
+        this.sortSortDep = this.sortSortDep.bind(this);
+        this.sortSortArr = this.sortSortArr.bind(this);
+        this.sortSortWay = this.sortSortWay.bind(this);
+        this.sortSortPrice = this.sortSortPrice.bind(this);
+        this.setReserve = this.setReserve.bind(this);
         this.pushnameS = this.pushnameS.bind(this);
         this.pushphoneS = this.pushphoneS.bind(this);
         this.pushsurnameS = this.pushsurnameS.bind(this);
 
+    }
+
+
+
+    setReserve(name, surname, email, phone) {
+
+        let reserveObj = this.state.reserveObj;
+        let userid = localStorage.userID;
+
+        let nameS = this.state.nameS;
+        let surnameS = this.state.surnameS;
+        let emailS = this.state.emailS;
+        let phoneS = this.state.phoneS;
+        let passwordS = this.state.passwordS;
+        let userAr = this.state.userAr;
+
+
+        let we_can_go = true;
+
+        if(this.state.nameS == ''){
+            we_can_go = false;
+            this.setState({
+                nameSErrorBlock:'block',
+                nameSBlockClass: 'form-group has-error',
+            });
+        }
+    if(this.state.noPlaceNum === 0) {
+        if (this.state.passengers != this.state.seatsSelect.length){
+            this.setState({
+                showSeatsBlock: true,
+                seatErrorBlock:'block',
+                seatBlockClass: 'form-group has-error',
+            });
+        }
+    }
+    if(this.state.surnameS == ''){
+        we_can_go = false;
+        this.setState({
+            surnameSErrorBlock:'block',
+            surnameSBlockClass: 'form-group has-error',
+        });
+    }
+    if(this.state.emailS == ''){
+        we_can_go = false;
+        this.setState({
+            emailSErrorBlock:'block',
+            emailSBlockClass: 'form-group has-error',
+        });
+    }
+    if(this.state.phoneS == ''){
+        we_can_go = false;
+        this.setState({
+            phoneSErrorBlock:'block',
+            phoneSBlockClass: 'form-group has-error',
+        });
+    }
+    let _userAr = this.state.userAr;
+    for(let i=0; i < _userAr.length; i++){
+        if (_userAr[i].nameS == ''){
+            _userAr[i].blocknameS = 'form-group has-error';
+            _userAr[i].labelnameS = 'block';
+            we_can_go = false;
+        }
+        if (_userAr[i].surnameS == ''){
+            _userAr[i].blocksurnameS = 'form-group has-error';
+            _userAr[i].labelsurnameS = 'block';
+            we_can_go = false;
+        }
+        if (_userAr[i].phoneS == ''){
+            _userAr[i].blockphoneS = 'form-group has-error';
+            _userAr[i].labelphoneS = 'block';
+            we_can_go = false;
+        }
+    }
+    this.setState({
+        userAr: _userAr
+    });
+
+    if (!we_can_go){
+        return false;
+    }
+    let arrBy = this.state.arrBy;
+    arrBy.name = name;
+    arrBy.surname = surname;
+    arrBy.email = email;
+    arrBy.phone = phone;
+
+    let infForLiq1 = this.state.infForLiq;
+    infForLiq1.arrBy = arrBy;
+    infForLiq1.arrTic = this.state.arrTic;
+    //массив для покупки в переменной arrTic
+    let inflengPass = this.state.inflengPass;
+    console.log(this.state.tripId, this.state.raceId);
+
+    console.log(this.state.infForLiq, this.state.lengPass);
+        axios({
+            method: 'post',
+            url: 'http://new.viabona.com.ua/api/index.php/api/pay/makereserve',
+            data: {
+                state: this.state,
+                userid: userid,
+            }
+        }).then(res => {
+            console.log(res.data);
+            this.setState({
+                reserveObj: res.data,
+                //showButPayTic: true,
+                //butPayTic: res.data,
+                showBuyNext: false
+
+            });
+            alert("Билет успешно забронирован!");
+        });
+
+    //console.log(this.state.nameS);
+    //console.log(this.state.userAr);
+    console.log(this.state.reserveObj);
+}
+
+    sortSortDep(){
+            if (this.state.forSortDownAndUp) {
+                this.sortDepartureUp();
+            } else {
+                this.sortDepartureDown();
+            }
+    }
+    sortDepartureUp() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (a.dtDepSec > b.dtDepSec) return 1;
+            if (a.dtDepSec < b.dtDepSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortDepartureDown() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (b.dtDepSec > a.dtDepSec) return 1;
+            if (b.dtDepSec < a.dtDepSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortSortArr(){
+        if (this.state.forSortDownAndUp) {
+            this.sortArriveUp();
+        } else {
+            this.sortArriveDown();
+        }
+    }
+    sortArriveUp() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (a.dtArrSec > b.dtArrSec) return 1;
+            if (a.dtArrSec < b.dtArrSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortArriveDown() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (b.dtArrSec > a.dtArrSec) return 1;
+            if (b.dtArrSec < a.dtArrSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortSortWay(){
+        if (this.state.forSortDownAndUp) {
+            this.sortWayTimeUp();
+        } else {
+            this.sortWayTimeDown();
+        }
+    }
+    sortWayTimeUp() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (a.wayTimeSec > b.wayTimeSec) return 1;
+            if (a.wayTimeSec < b.wayTimeSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortWayTimeDown() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (b.wayTimeSec > a.wayTimeSec) return 1;
+            if (b.wayTimeSec < a.wayTimeSec) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortSortPrice(){
+        if (this.state.forSortDownAndUp) {
+            this.sortPriceUp();
+        } else {
+            this.sortPriceDown();
+        }
+    }
+    sortPriceUp() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (a.price > b.price) return 1;
+            if (a.price < b.price) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
+    }
+    sortPriceDown() {
+        let _tripList = this.state.tripList;
+        function compareNumeric(a, b) {
+            if (b.price > a.price) return 1;
+            if (b.price < a.price) return -1;
+        }
+        _tripList.sort(compareNumeric);
+        this.setState({_tripList:_tripList});
+        this.setState({ forSortDownAndUp: !this.state.forSortDownAndUp });
     }
     changePromocode(el){
         this.setState({
@@ -203,13 +482,15 @@ class Finder extends React.Component{
         });
     }
     selectPlace(placeArray, row, place) {
-        if (!placeArray.free || placeArray.svc) {
+        if (!placeArray.free) {
+            //if (!placeArray.free || placeArray.svc) {
             return false;
         }
         // console.log('Ряд:' + row);
         // console.log('Место:' + place);
         // console.log('Место:' + placeArray.n);
-        // console.log('Место в матрице:' + this.state.matrix[0][row][place].n);
+        //console.log('Служебное:' + placeArray.svc);
+        //console.log('Служебное в матрице:' + this.state.matrix[0][row][place].svc);
 
             let passengersQuantity = this.state.passengers;
             let seatsSelect = this.state.seatsSelect;
@@ -394,16 +675,126 @@ class Finder extends React.Component{
         });
 
     }
+
+    
+
+    PayArrTwo(name, surname, email, phone) {
+
+        let userid = localStorage.userID;
+        let we_can_go = true;
+        if(this.state.nameS == ''){
+            we_can_go = false;
+            this.setState({
+                nameSErrorBlock:'block',
+                nameSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.noPlaceNum === 0) {
+            if (this.state.passengers != this.state.seatsSelect.length){
+                this.setState({
+                    showSeatsBlock: true,
+                    seatErrorBlock:'block',
+                    seatBlockClass: 'form-group has-error',
+                });
+            }
+        }
+        if(this.state.surnameS == ''){
+            we_can_go = false;
+            this.setState({
+                surnameSErrorBlock:'block',
+                surnameSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.emailS == ''){
+            we_can_go = false;
+            this.setState({
+                emailSErrorBlock:'block',
+                emailSBlockClass: 'form-group has-error',
+            });
+        }
+        if(this.state.phoneS == ''){
+            we_can_go = false;
+            this.setState({
+                phoneSErrorBlock:'block',
+                phoneSBlockClass: 'form-group has-error',
+            });
+        }
+        let _userAr = this.state.userAr;
+        for(let i=0; i < _userAr.length; i++){
+            if (_userAr[i].nameS == ''){
+                _userAr[i].blocknameS = 'form-group has-error';
+                _userAr[i].labelnameS = 'block';
+                we_can_go = false;
+            }
+            if (_userAr[i].surnameS == ''){
+                _userAr[i].blocksurnameS = 'form-group has-error';
+                _userAr[i].labelsurnameS = 'block';
+                we_can_go = false;
+            }
+            if (_userAr[i].phoneS == ''){
+                _userAr[i].blockphoneS = 'form-group has-error';
+                _userAr[i].labelphoneS = 'block';
+                we_can_go = false;
+            }
+        }
+        this.setState({
+            userAr: _userAr
+        });
+
+        if (!we_can_go){
+            return false;
+        }
+        let arrBy = this.state.arrBy;
+        arrBy.name = name;
+        arrBy.surname = surname;
+        arrBy.email = email;
+        arrBy.phone = phone;
+
+        let infForLiq1 = this.state.infForLiq;
+        infForLiq1.arrBy = arrBy;
+        infForLiq1.arrTic = this.state.arrTic;
+        //массив для покупки в переменной arrTic
+        let inflengPass = this.state.inflengPass;
+        console.log(this.state.tripId, this.state.raceId);
+
+        console.log(this.state.infForLiq, this.state.lengPass);
+        axios({
+            method: 'post',
+            url: 'http://new.viabona.com.ua/api/index.php/api/pay/confirm',
+            data: {
+                state: this.state,
+                userid: userid,
+            }
+        }).then(res => {
+            console.log(res.data);
+            this.setState({
+                showButPayTicTwo: true,
+                butPayTicTwo: res.data,
+                showBuyNextTwo: false
+
+            })
+
+        });
+
+    }
+
     backStup(){
         this.setState({
             showByTic: 'none',
-            blockShow: 'block'
+            blockShow: 'block',
+            showDetails: '',
+            showFindBlock: true,
+            
         })
+        //document.getElementById('someText').style.display = "block";
     }
-    showByTic(price, currency, trip, dtArr, stArrName, dtDep, stDepAddr, pass, currName, raceId, tripId){
+    showByTic(price, currency, trip, dtArr, stArrName, stDepName, dtDep, stDepAddr, stArrAddr, pass, currName, raceId, tripId, dtDepSec, dtArrSec, wayTimeSec, key){
+
         this.setState({
             showByTic: 'block',
-            blockShow: 'none'
+            blockShow: 'none',
+            showDetails: 'block',
+            showFindBlock: false,
         });
         let arrUser = this.state.arrTic;
         arrUser.price = price;
@@ -411,13 +802,17 @@ class Finder extends React.Component{
         arrUser.trip = trip;
         arrUser.dtArr = dtArr;
         arrUser.stArrName = stArrName;
+        arrUser.stDepName = stDepName;
         arrUser.dtDep = dtDep;
         arrUser.stDepAddr = stDepAddr;
+        arrUser.stArrAddr = stArrAddr;
         arrUser.passengers = pass;
         arrUser.currName = currName;
         arrUser.raceId = raceId;
         arrUser.tpripId = tripId;
-        arrUser.raceId = raceId;
+        arrUser.dtDepSec = dtDepSec;
+        arrUser.dtArrSec = dtArrSec;
+        arrUser.wayTimeSec = wayTimeSec;
         this.setState({
             priceBy: price * pass,
             currNameBy: currName,
@@ -427,9 +822,17 @@ class Finder extends React.Component{
             DepInfForBy: dtDep,
             ArrInfForBy: dtArr,
             tripId: tripId,
-            raceId: raceId
-
+            raceId: raceId,
+            DepSort: dtDepSec,
+            ArrSort: dtArrSec,
+            wayTimeSort: wayTimeSec,
+            arrTicTwo: [arrUser],
         });
+
+
+
+
+
         let lengPass = this.state.lengPass;
         let userAr = [];
         for (let i = 1; i < this.state.passengers; i++) {
@@ -441,11 +844,12 @@ class Finder extends React.Component{
         console.log(lengPass);
         console.log(this.state.arrTic);
 
+        let lgot = this.state.lgot;
         let tripMatrix = this.state.matrix;
        // console.log(tripMatrix);
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/tripMatrix?tripId=' + tripId).then(res => {
             //tripMatrix.matrix = res.data;
-           // console.log(res.data[0].busTempl);
+           console.log(res.data);
             this.setState({
                 noPlaceNum : parseInt(res.data[0].noPlaceNum)
             });
@@ -455,26 +859,20 @@ class Finder extends React.Component{
                 this.setState({matrix : res.data[0].busTempl.matrix});
                 this.setState({seatsRows : res.data[0].busTempl.size[0].x});
                 this.setState({seatsColumns : res.data[0].busTempl.size[0].y});
-                console.log(this.state.seatsRows);
-                console.log(this.state.seatsColumns);
+                //console.log(this.state.seatsRows);
+                //console.log(this.state.seatsColumns);
             }
 
-        });
+        });        
 
+        //document.getElementsByClassName('fusion-fullwidth.fullwidth-box.fusion-builder-row-2.someText.nonhundred-percent-fullwidth.non-hundred-percent-height-scrolling').style.display = "none";
+       // document.getElementById('someText').style.display = "none";
+        //document.body.style.display = "none";
+        //document.body.setAttribute('display', 'none');
+            //this.loremIpsumF();
 
-        // let buyerlogin = this.state.buyerlogin;
-        // let buyerloginLogin = this.state.buyerlogin;
-        // axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyerlogin?login=' + this.state.loginAuth + '&password=' + this.state.passwordAuth).then(res => {
-        //         this.setState({
-        //             //buyerlogin: res.data,
-        //             buyerloginLogin: res.data.id,
-        //             }
-        //         );
-        //         //console.log(buyerlogin);
-        //         console.log(buyerloginLogin);
-        //         //console.log(this.state.buyerlogin);
-        // });
     }
+    
     prePromocodeRequest(e) {
         let promoInput = this.state.promoInput;
         this.setState({
@@ -512,10 +910,10 @@ class Finder extends React.Component{
         if(this.state.noPlaceNum === 1) {return false};
         console.log(matrix[0]);
         matrix[0].map((el, i) => {
-            console.log(el+'array');
+            //console.log(el+'array');
 
             el.map((ryad, ii) => {
-                console.log('asd'+ryad);
+                //console.log('asd'+ryad);
                 return (
                     <div style={{ border: '1px solid black', padding: '5px'}}>{ryad.n}</div>
                 )
@@ -577,7 +975,8 @@ class Finder extends React.Component{
             emailS: "",
             UserID: "",
             phoneS: "",
-            ticketsInfo: []
+            ticketsInfo: [],
+            reserveObjInfo: [],
         });
         this.setState({
             showBlockTickets: false,
@@ -586,14 +985,48 @@ class Finder extends React.Component{
 
     }
     ticketsInfoFunction(userID){
-       // alert(userID);
-       // if (userID > 0){
-            axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/buyertickets?id=' + userID).then(res => {
+
+        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/newbuyertickets?id=' + userID).then(res => {
                 this.setState({
-                    ticketsInfo : res.data
+                    ticketsInfo : res.data,
                 });
+        });
+
+    }
+    ticketsInfoFunctionTwo() {
+
+        let userid = localStorage.userID;
+        let reserveObjInfo = this.state.reserveObjInfo;
+        let reserveObjInfoExtended = this.state.reserveObjInfoExtended;
+        let preReserveObjInfo = this.state.preReserveObjInfo;
+        let mSum = this.state.mSum;
+
+
+            axios.get('http://new.viabona.com.ua/api/index.php/api/pay/orderinformation?userid=' + userid).then(res => {
+                //for(let x = 0; x < 3; x++) {
+                if(res.data.tlist){
+                    this.setState({
+                        //reserveObjInfo: [res.data.tlist[0]],
+                        reserveObjInfo: [res.data.tlist[0]],
+                        mSum: [res.data.mSum],
+                        //reserveObjInfo: preReserveObjInfo,
+                    });
+                }
+                //}
             });
-       // }
+
+        axios.get('http://new.viabona.com.ua/api/index.php/api/pay/orderinformationextended?userid=' + userid).then(res => {
+            //for(let x = 0; x < 3; x++) {
+            this.setState({
+                //reserveObjInfo: [res.data.tlist[0]],
+                reserveObjInfoExtended: res.data,
+                //reserveObjInfo: preReserveObjInfo,
+            });
+            //}
+        });
+
+        console.log(this.state.reserveObjInfo);
+        console.log(this.state.reserveObjInfoExtended);
 
     }
     CloseModalUserProfile(){
@@ -605,7 +1038,13 @@ class Finder extends React.Component{
     CloseModalUserTickets(){
         this.setState({
             modalUserTicketsClass: 'modal fade',
-            modalUserTicketsStyle: 'none'
+            modalUserTicketsStyle: 'none',
+        });
+    }
+    CloseModalUserTicketsTwo(){
+        this.setState({
+            modalUserTicketsClassTwo: 'modal fade',
+            modalUserTicketsStyleTwo: 'none',
         });
     }
     CloseModalLogin(){
@@ -635,7 +1074,15 @@ class Finder extends React.Component{
         this.ticketsInfoFunction(localStorage.userID);
         this.setState({
             modalUserTicketsClass: 'modal fade in',
-            modalUserTicketsStyle: 'block'
+            modalUserTicketsStyle: 'block',
+        });
+    }
+
+    showBlockTicketsFunctionTwo(){
+        this.ticketsInfoFunctionTwo(localStorage.userID);
+        this.setState({
+            modalUserTicketsClassTwo: 'modal fade in',
+            modalUserTicketsStyleTwo: 'block',
         });
     }
 
@@ -646,9 +1093,6 @@ class Finder extends React.Component{
             temp_pas = 1;
         }
         this.setState({passengers: temp_pas});
-
-
-
 
     }
     showBlockRegister() {
@@ -929,17 +1373,40 @@ class Finder extends React.Component{
 
     handleGoBackChange(goback){
         this.setState({ goback });
+        if (goback) {
+            this.setState({
+                ButtonClassName: 'Styled__ResettedButton-sc-1dxewfu-0 Styled__ColoredButton-sc-1dxewfu-1 Styled__SizedButton-sc-1dxewfu-2 Styled__StyledButton-sc-1dxewfu-3 iqrXFx form-field__submit removeRight'
+            });
+        }else{
+            this.setState({
+               ButtonClassName: 'Styled__ResettedButton-sc-1dxewfu-0 Styled__ColoredButton-sc-1dxewfu-1 Styled__SizedButton-sc-1dxewfu-2 Styled__StyledButton-sc-1dxewfu-3 iqrXFx form-field__submit'
+            });
+        }
+        let computedStyle = getComputedStyle(document.getElementById('submit'));        
+        let computedStyleBtn = getComputedStyle(document.getElementById('SubmitDiv'));
+        let marginL = computedStyle.marginLeft;
+        if (marginL == '-20px'){
+            document.getElementById('submit').style.marginLeft = "0px";
+        }else{
+            document.getElementById('submit').style.marginLeft = "-20px" ;
+        }
     }
 
     handleChange(e) {
        this.setState({[e.target.name]: e.target.value});
 
     }
+    handleCheck() {
+       this.setState({checkboxOffer: !this.state.checkboxOffer});
+    }
+    handleOffer() {
+        this.setState({offerShow: !this.state.offerShow});
+    }
     handleSubmit(el){
        // console.log(el);
         //this.loadin();
         this.setState({
-            loadingTwo: true
+            loadingTwo: true,
         })
         let direct = this.state.direct ? this.state.direct : 0;
         let goback = this.state.goback ? this.state.goback : 0;
@@ -962,14 +1429,18 @@ class Finder extends React.Component{
 
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/getTrips?direct=' + direct + '&fromID=' + this.state.from + '&toID=' + this.state.to + '&on=' + when + '&passengers=' + this.state.passengers + '&goback=' + goback + '&whenback=' + whenback + '&currency=' + this.state.currency).then(res => {
             console.log(res.data);
-
+this.setState({blockShow: 'block'});
             if (!res.data.error){
                 this.setState({
                     loadingTwo: false
-                })
+                });
+                this.setState({
+                    sortMenu: true
+                });
                 this.setState({visibleCalendar : 'block'});
                 this.setState({
                     tripList : res.data,
+                    tripListTwo : res.data,
                     tripId : res.data[0].tripId,
                 });
                 let dataCalendarTest = res.data[0].dtArr;
@@ -1031,7 +1502,7 @@ class Finder extends React.Component{
                         this.setState({
                             resErrorRace2: res.data.error.name,
                             showByTic: 'none',
-                            blockShow: 'none'
+                            blockShow: 'block'
                         });
                         this.setState({
                             loadingTwo: false
@@ -1041,7 +1512,7 @@ class Finder extends React.Component{
                             resErrorRace: true,
                             nextDate: new Date(res.data[0].depDates[0]),
                             showByTic: 'none',
-                            blockShow: 'none'
+                            blockShow: 'block'
                         });
                         this.setState({
                             loadingTwo: false
@@ -1053,7 +1524,7 @@ class Finder extends React.Component{
             }
         });
 
-
+        
     }
     loadin(){
         this.setState({
@@ -1088,9 +1559,12 @@ class Finder extends React.Component{
         _InviteList[id].showDateil = !_InviteList[id].showDateil;
         //alert(_InviteList[id].tripId);
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/stopTrip?tripId=' + _InviteList[id].tripId).then(res => {
-            _InviteList[id].trip_stop = res.data
+            //console.log(_InviteList);
+            //console.log(this.state.tripList);   
+        _InviteList[id].trip_stop = res.data
             this.setState({tripList : _InviteList});
         });
+
     };
     infoBlockBack = id => e => {
         console.log(id);
@@ -1098,10 +1572,13 @@ class Finder extends React.Component{
         let _InviteList = this.state.tripList;
         _InviteList[id].showDateil2 = !_InviteList[id].showDateil2;
         axios.get('http://new.viabona.com.ua/api/index.php/api/octobus/stopTrip?tripId=' + _InviteList[id].backTripId).then(res => {
-            _InviteList[id].trip_stop_back = res.data;
+            console.log(_InviteList);
+            console.log(this.state.tripList);    
+        _InviteList[id].trip_stop_back = res.data;
             this.setState({tripList : _InviteList});
         });
-        this.setState({tripList : _InviteList});
+        //this.setState({tripList : _InviteList});
+        
     };
 
     render() {
@@ -1109,7 +1586,10 @@ class Finder extends React.Component{
         backgroundColor: 'transparent',
         textOverflow: 'ellipsis',
         fontSize: '16px',
-        outline: 'none',
+        outline: 'none',  
+        position: 'static',
+        overflowY: 'scroll',
+        maxHeight: '50vh' ,     
         border: 'none'};
         const autoCompleteWrapperStyle = {
             textTransform: 'none',
@@ -1121,7 +1601,10 @@ class Finder extends React.Component{
         lineHeight: '30px',
         backgroundColor: '#eee',
         borderBottomLeftRadius: '5px',
-        borderBottomRightRadius: '5px'
+        borderBottomRightRadius: '5px',
+        position: 'static',
+        overflowY: 'scroll',
+        maxHeight: '50vh' 
         };
         const pushme = [];
         let arrayForSession = this.state.sessionUserActiv;
@@ -1132,20 +1615,26 @@ class Finder extends React.Component{
 
 
             <div >
-
             <div className="mainMainBlock" >
                 <div className="myCab" >
                     {localStorage.name ?
                         <div>
-                            <p>{localStorage.name}</p>
-                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockProfileFunction()}>Мой профиль</p>
-                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockTicketsFunction()}>Мои билеты</p>
-                            <p className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.deleteLocal()}>Выход</p>
-
+                        <nav>
+                        <ul className="topMenu">
+                            <li><p className="subMenuLink" style={{ cursor: 'pointer'}}>{localStorage.name}<p className = "burger">≡</p></p>
+                        <ul className="subMenu">
+                            <li><p id="myProfileLink" className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockProfileFunction()}>Мой профиль</p></li>
+                            <li><p id="paymentTicketsLink" className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockTicketsFunction()}>Оплаченные билеты</p></li>
+                            <li><p  id="orderTicketsLink" className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.showBlockTicketsFunctionTwo()}>Забронированные билеты</p></li>
+                            <li><p  id="exitLink" className='textCab' style={{ cursor: 'pointer'}} onClick={()=>this.deleteLocal()}>Выход</p></li>
+                        </ul>
+                        </li>
+                        </ul>
+                        </nav>
                         </div>
                         :
                         <div>
-                            <a href="#" style={{cursor: 'pointer'}} onClick={()=>this.showBlockLogin()}>Вход</a> | <a href="#" style={{cursor: 'pointer'}} onClick={()=>this.showBlockRegister()}>Регистрация</a>
+                            <a href="#" id="enterLink" style={{cursor: 'pointer'}} onClick={()=>this.showBlockLogin()}>Вход</a> | <a href="#" style={{cursor: 'pointer', color: '#D50707'}} id="registerLink" onClick={()=>this.showBlockRegister()}>Регистрация</a>
                             </div>}
                 </div>
 
@@ -1199,7 +1688,7 @@ class Finder extends React.Component{
                                 <button type="button" className="close" onClick={()=>this.CloseModalUserTickets()} data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                                <h4 className="modal-title" id="myModalLabel">Мои билеты</h4>
+                                <h4 className="modal-title" id="myModalLabel">Мои оплаченные билеты</h4>
                             </div>
                             <div className="modal-body">
                                 <div className="table-responsive" style={{overflowY:'scroll', maxHeight: '500px', height: '500px'}}>
@@ -1246,15 +1735,97 @@ class Finder extends React.Component{
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
+
                             <div className="modal-footer">
-
                             </div>
+
                         </div>
                     </div>
                 </div>
 
+
+                <div className={this.state.modalUserTicketsClassTwo} id="modalUserProfile" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style={{display: this.state.modalUserTicketsStyleTwo}}>
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <button type="button" className="close" onClick={()=>this.CloseModalUserTicketsTwo()} data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 className="modal-title" id="myModalLabel">Мои забронированные билеты</h4>
+                            </div>
+                            <div className="modal-body">
+                                <div className="table-responsive" style={{overflowY:'scroll', maxHeight: '500px', height: '500px'}}>
+                                    <table className="table table-striped table-hovered table-bordered">
+                                        <tbody>
+                                        { this.state.reserveObjInfo.map((list, key) =>
+                                            <tr key={key}>
+                                                <td>
+                                                    <table>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}><b>Отправление:</b><br/>
+                                                                {list.pFIO}
+                                                                <br/>
+                                                                {list.dTime} | {list.sFrom} | {list.sFAddr}
+                                                            </td>
+                                                            <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}><b>Прибытие:</b><br/>
+                                                                {list.aTime} | {list.sTo} | {list.sTAddr}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{
+                                                                border: '1px solid #dee2e6',
+                                                                verticalAlign: 'top',
+                                                                textAlign: 'left',
+                                                                padding: '10px', width:'50%'
+                                                            }}>
+                                                                <b>Место:</b><br/>
+                                                                {list.place}
+                                                            </td>
+                                                            <td style={{border: '1px solid #dee2e6', verticalAlign: 'top', textAlign:'left', padding: '10px', width:'50%'}}>
+                                                                <b>Цена:</b><br/>
+                                                                {this.state.mSum} {list.curr}
+                                                                <div className="submit-btn">
+                                                                    {
+                                                                        this.state.showBuyNextTwo ?
+                                                                            <button className="reserveButton" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
+                                                                                    onClick={() => this.PayArrTwo(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
+                                                                                Оплатить
+                                                                            </button>
+
+                                                                            :
+                                                                            null
+                                                                    }
+
+
+                                                                    {
+                                                                        this.state.showButPayTicTwo ?
+                                                                            <div dangerouslySetInnerHTML={{ __html: this.state.butPayTicTwo }} />
+
+                                                                            :
+                                                                            null
+                                                                    }
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td><hr/></td>
+                                            </tr>
+                                        )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div className="modal-footer">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
 
                 <div className="blockSign" style={{display: this.state.showBlockTickets ? 'block' : 'none'}}>
@@ -1267,7 +1838,7 @@ class Finder extends React.Component{
                                         <div key={key}>
                                             <p>
                                                 Название рейса: {list.raceName}
-                                            </p><p>
+                                            </p><p className="mobilePerevozchik">
                                                 Перевозчик: {list.carrierName}
                                             </p>
                                         </div>
@@ -1379,19 +1950,23 @@ class Finder extends React.Component{
                 {/*    конец блока регистрации*/}
 
 
-                <div className="fixBox">
-                <div className="styleFindBlock">
 
+                <div className="fixBox">
+
+                { this.state.showFindBlock ?
+                <div className="styleFindBlock">
 
                 <div className="search-form--new">
                     <div className="search-form__group search-form__group--from flex-2 search-form__group--white"
                          style={{display:'block'}}>
-                        <div className="">
-                            <div style={{position:'relative'}}>
+                         
+                        <div className="fromWhere" style={{ width: this.state.goback ? '190px' : '' }}>
+                            <div style={{position:'relative', boxSizing:'border-box'}}>
                                 <div>
-                                    <div className="form-field form-field--has-value" style={{zIndex: '500'}}>
+                                    <div className="form-field form-field--has-value" style={{zIndex: '500', position:'relative'}}>
                                         <label className="form-field__label"
                                                 htmlFor="from">Откуда</label>
+                                                
                                         <Autocomplete className="listIndex"
                                             inputProps={{ style: autoCompleteStyle }}
                                             items={this.state.cityList}
@@ -1400,15 +1975,18 @@ class Finder extends React.Component{
                                             renderItem={(item, highlighted) =>
                                                 <div
                                                     key={item.idCity}
-                                                    style={{ zIndex: '999000000000000000000000000000', backgroundColor: highlighted ? '#708090' : 'transparent', cursor:"pointer"}}
+                                                    style={{ zIndex: '999000000000000000000000000000', backgroundColor: highlighted ? '#c4c4c4' : 'transparent', cursor:"pointer", position:"static", boxSizing: "border-box", display: "block", marginBottom: '5px', paddingTop: '5px', paddingBottom: '5px'}}
                                                 >
                                                     {item.nameCity}
+                                                    
                                                 </div>
+                                                
                                             }
                                             value={this.state.from}
                                             onChange={e => this.setState({ from: e.target.value })}
                                             onSelect={from => this.setState({ from })}
                                         />
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -1418,12 +1996,12 @@ class Finder extends React.Component{
                         </div>
                         <div className="next-date direct-switch">
                             <label htmlFor="material-switch">
-                                <span>Искать с пересадками  </span>
+                                <span>Только прямые рейсы  </span>
                                 <Switch
                                     checked={this.state.direct}
                                     onChange={this.handleDirectChange}
-                                    onColor="#86d3ff"
-                                    onHandleColor="#2693e6"
+                                    onColor="#D50707"
+                                    onHandleColor="#ffffff"
                                     handleDiameter={14}
                                     name="direct"
                                     uncheckedIcon={false}
@@ -1440,9 +2018,9 @@ class Finder extends React.Component{
                     </div>
                     <div className="search-form__group search-form__group--white search-form__group--to flex-2"
                          style={{display:'block'}}>
-                        <div className="">
+                        <div className="toWhere" style={{ width: this.state.goback ? '190px' : '' }}>
                             <div style={{position:'relative'}}>
-                                <div>
+                                <div >
                                     <div className="form-field form-field--has-value" style={{zIndex: '490'}}>
                                         <label className="form-field__label"
                                                htmlFor="to">Куда</label>
@@ -1454,7 +2032,7 @@ class Finder extends React.Component{
                                             renderItem={(item, highlighted) =>
                                                 <div
                                                     key={item.idCity}
-                                                    style={{ backgroundColor: highlighted ? '#708090' : 'transparent', cursor:"pointer"}}
+                                                    style={{ backgroundColor: highlighted ? '#c4c4c4' : 'transparent', cursor:"pointer", position:"static", boxSizing: "border-box", display: "block", marginBottom: '5px', paddingTop: '5px', paddingBottom: '5px'}}
                                                 >
                                                     {item.nameCity}
                                                 </div>
@@ -1468,14 +2046,14 @@ class Finder extends React.Component{
                                 </div>
                             </div>
                         </div>
-                        <div className="next-date direct-switch">
+                        <div className="next-date direct-switch" style={{marginLeft: '28px'}} >
                             <label htmlFor="material-switch">
                                 <span>В обе стороны  </span>
                                 <Switch
                                     checked={this.state.goback}
                                     onChange={this.handleGoBackChange}
-                                    onColor="#86d3ff"
-                                    onHandleColor="#2693e6"
+                                    onColor="#D50707"
+                                    onHandleColor="#ffffff"
                                     handleDiameter={14}
                                     name="goback"
                                     uncheckedIcon={false}
@@ -1486,6 +2064,7 @@ class Finder extends React.Component{
                                     width={40}
                                     className="react-switch"
                                     id="material-switch"
+                                    
                                 />
                             </label>
                         </div>
@@ -1555,9 +2134,9 @@ class Finder extends React.Component{
                         </span>
                     </div>
                     <div className="search-form__group search-form__group--passengers search-form__group--white">
-                        <div className="" style={{position:'relative'}}>
+                        <div className="paseengersHover" style={{position:'relative'}}>
                             <div className="form-group">
-                                <div className="form-field form-field--has-value form-control-lg select " style={{zIndex: '440'}}>
+                                <div className="form-field form-field--has-value form-control-lg select" id="passengersW" style={{zIndex: '440'}}>
                                     <label className="form-field__label"
                                            htmlFor="passengers">
                                         Пассажиры
@@ -1576,7 +2155,7 @@ class Finder extends React.Component{
 
                                 <label className="mobile-search__form-addon"
                                        htmlFor="passengers">
-                                    <span className="icon icon-passanger-red text-primary"></span>
+                                    {/* <span className="icon icon-passanger-red text-primary"></span> */}
                                 </label>
 
                             </div>
@@ -1588,9 +2167,9 @@ class Finder extends React.Component{
                             </select>
                         </div>
                     </div>
-                    <div className="search-form__group search-form__group--submit">
-                        <button
-                            className="Styled__ResettedButton-sc-1dxewfu-0 Styled__ColoredButton-sc-1dxewfu-1 Styled__SizedButton-sc-1dxewfu-2 Styled__StyledButton-sc-1dxewfu-3 iqrXFx form-field__submit"
+                    <div className="search-form__group search-form__group--submit" id="SubmitDiv">
+                        <button                            
+                            className={this.ButtonClassName}
                             id="submit"
                             name="submit"
                             onClick={this.handleSubmit}>
@@ -1599,14 +2178,114 @@ class Finder extends React.Component{
                     </div>
                 </div>
                 </div>
+                :null}
                     <div>{
                         this.state.loadingTwo?
-                            <div className="mainImgLoad">
-                                <div className="imgLoad"></div>
+                            <div className="timeline-wrapper">
+                            <div className="timeline-item">
+                            <div className="animated-background">
+                            <div className="background-masker header-top"></div>
+                                    <div className="background-masker header-left"></div>
+                                    <div className="background-masker header-right"></div>
+                                    <div className="background-masker header-bottom"></div>
+                                    <div className="background-masker subheader-left"></div>
+                                    <div className="background-masker subheader-right"></div>
+                                    <div className="background-masker subheader-bottom"></div>
+                                    <div className="background-masker content-top"></div>
+                                    <div className="background-masker content-first-end"></div>
+                                    <div className="background-masker content-second-line"></div>
+                                    <div className="background-masker content-second-end"></div>
+                                    <div className="background-masker content-third-line"></div>
+                                    <div className="background-masker content-third-end"></div>
+                            </div>                            
+                            </div>  
+                            <div className="timeline-item">
+                            <div className="animated-background">
+                            <div className="background-masker header-top"></div>
+                                    <div className="background-masker header-left"></div>
+                                    <div className="background-masker header-right"></div>
+                                    <div className="background-masker header-bottom"></div>
+                                    <div className="background-masker subheader-left"></div>
+                                    <div className="background-masker subheader-right"></div>
+                                    <div className="background-masker subheader-bottom"></div>
+                                    <div className="background-masker content-top"></div>
+                                    <div className="background-masker content-first-end"></div>
+                                    <div className="background-masker content-second-line"></div>
+                                    <div className="background-masker content-second-end"></div>
+                                    <div className="background-masker content-third-line"></div>
+                                    <div className="background-masker content-third-end"></div>
+                            </div>                            
+                            </div>
+                            <div className="timeline-item">
+                            <div className="animated-background">
+                            <div className="background-masker header-top"></div>
+                                    <div className="background-masker header-left"></div>
+                                    <div className="background-masker header-right"></div>
+                                    <div className="background-masker header-bottom"></div>
+                                    <div className="background-masker subheader-left"></div>
+                                    <div className="background-masker subheader-right"></div>
+                                    <div className="background-masker subheader-bottom"></div>
+                                    <div className="background-masker content-top"></div>
+                                    <div className="background-masker content-first-end"></div>
+                                    <div className="background-masker content-second-line"></div>
+                                    <div className="background-masker content-second-end"></div>
+                                    <div className="background-masker content-third-line"></div>
+                                    <div className="background-masker content-third-end"></div>
+                            </div>                            
+                            </div>
+                            <div className="timeline-item">
+                            <div className="animated-background">
+                                    <div className="background-masker header-top"></div>
+                                    <div className="background-masker header-left"></div>
+                                    <div className="background-masker header-right"></div>
+                                    <div className="background-masker header-bottom"></div>
+                                    <div className="background-masker subheader-left"></div>
+                                    <div className="background-masker subheader-right"></div>
+                                    <div className="background-masker subheader-bottom"></div>
+                                    <div className="background-masker content-top"></div>
+                                    <div className="background-masker content-first-end"></div>
+                                    <div className="background-masker content-second-line"></div>
+                                    <div className="background-masker content-second-end"></div>
+                                    <div className="background-masker content-third-line"></div>
+                                    <div className="background-masker content-third-end"></div>
+                            </div>                            
+                            </div>
+                            <div className="timeline-item">
+                            <div className="animated-background">
+                            <div className="background-masker header-top"></div>
+                                    <div className="background-masker header-left"></div>
+                                    <div className="background-masker header-right"></div>
+                                    <div className="background-masker header-bottom"></div>
+                                    <div className="background-masker subheader-left"></div>
+                                    <div className="background-masker subheader-right"></div>
+                                    <div className="background-masker subheader-bottom"></div>
+                                    <div className="background-masker content-top"></div>
+                                    <div className="background-masker content-first-end"></div>
+                                    <div className="background-masker content-second-line"></div>
+                                    <div className="background-masker content-second-end"></div>
+                                    <div className="background-masker content-third-line"></div>
+                                    <div className="background-masker content-third-end"></div>
+                            </div>                            
+                            </div>  
                             </div>
                             : null
                     }
                     </div>
+
+                    {/* <div>{
+                    //     this.state.loadingTwo?
+                    //         <div className="mainImgLoad">
+                    //             <div className="imgLoad"></div>
+                    //         </div>
+                    //         : null
+                    // }
+                    // </div> */}
+
+
+
+                </div>
+
+                <div style={{display: this.state.blockShow}}>
                     <div className='mainBlockError'>
                         { this.state.resErrorRace ?
                             <p className="errorSend"> К сожалению по вашему запросу не найдено рейсов в назначеную дату<br/>Следующий ближайший рейс от выбранной даты <a href="#" onClick={this.setNextDate} style={{cursor: 'pointer'}}>
@@ -1622,15 +2301,14 @@ class Finder extends React.Component{
                             null
                         }
                     </div>
-                    <div className="blockCalender"  style={{display: this.state.blockShow}}>
-
-                    <div className="calendar__prev"
-                         style={{display: this.state.visibleCalendar}}
-                            onClick={this.handleChangeDateArrow.bind(this, -1)}>
+                    <div className="blockCalender"  style={{display: this.state.blockShow, margin: '0 auto'}}>
+                        <div className="calendar__prev"
+                             style={{display: this.state.visibleCalendar}}
+                             onClick={this.handleChangeDateArrow.bind(this, -1)}>
                         </div>
                         {/*календарь*/}
                         { this.state.dataCalendar.map((dateCalendar, key) =>
-                                <div key={key} onClick={() => this.changeDateOnCalendar(dateCalendar.element)}>
+                            <div key={key} onClick={() => this.changeDateOnCalendar(dateCalendar.element)}>
                                 <div className="calendar__item calendar__key3 styleForDays" style={dateCalendar.stylingDateElement} >
                                     <p>
                                         <Moment format="D MMM" withTitle>
@@ -1648,21 +2326,37 @@ class Finder extends React.Component{
                              onClick={this.handleChangeDateArrow.bind(this, 1)}>
                         </div>
                     </div>
-                </div>
-
-                <div style={{display: this.state.blockShow}}>
                     <div className="fixCalendar" style={{display: this.state.blockShow}}>
 
+                    </div>
+
+
+                    <div className="sort" style={{display: this.state.sortMenu ? 'flex' : 'none'}}>
+                        <div className="sortItem" onClick={this.sortSortDep}>Время отправления <svg  xmlns="http://www.w3.org/2000/svg"
+                                                                   viewBox="0 0 320 512"
+                                                                   className="svg-is-active">
+                            <path fill="currentColor" d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"> </path></svg></div>
+                        <div className="sortItem" onClick={this.sortSortWay}>Время в пути <svg xmlns="http://www.w3.org/2000/svg"
+                                                              viewBox="0 0 320 512"
+                                                              className="svg-is-active">
+                            <path fill="currentColor" d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"> </path></svg></div>
+                        <div className="sortItem" onClick={this.sortSortArr}>Время прибытия <svg xmlns="http://www.w3.org/2000/svg"
+                                                                viewBox="0 0 320 512"
+                                                                className="svg-is-active">
+                            <path fill="currentColor" d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"> </path></svg></div>
+                        <div className="sortItem" onClick={this.sortSortPrice}>Стоимость <svg xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 320 512"
+                                                            className="svg-is-active">
+                            <path fill="currentColor" d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41z"> </path></svg></div>
                     </div>
 
                     { this.state.tripList.map((list, key) =>
 
 
-
-
                         <div key={key} className="blockShow" >
+
                             {/*//новый блок для вывода*/}
-                            <div className="showBlock" style={{display: this.state.blockShow}}>
+                            <div className="showBlock" style={{display: this.state.blockShow}} data-sort-departure={list.dtDepSec} data-sort-arrive={list.dtArrSec} data-sort-waytime={list.wayTimeSec} data-sort-price={Math.trunc(list.price)}>
                                 <div className='upShowBlock'>
                                     <div className='oneGridForShow'>
                                         <div className='upOneGridForShow'>
@@ -1704,18 +2398,19 @@ class Finder extends React.Component{
                                             <p className='textPrice' style={{float: 'right'}}>{list.price} {list.currName}</p>
                                         </div>
                                         <div className='rightShowBlock'>
-                                            {!this.state.goback ? <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.dtDep, list.stDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button> : ''}
+                                            {!this.state.goback ? <button className="butTic" onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.stDepName, list.dtDep, list.stDepAddr, list.stArrAddr, this.state.passengers, list.currName, list.id, list.tripId, key)}>Выбрать</button> : ''}
                                             <br/>
-                                            <p className='textPass' style={{color: 'red'}}>{list.places} мест</p>
+                                            <p className='textPass' style={{color: '#D50707'}}>{list.places} мест</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className='botShowBlock'>
-                                    <div className="col-md-2"><br/><br/><p className="trip__details__down" onClick={this.infoBlock(key)} style={{color: 'red'}}>Детали рейса</p></div>
-                                    <p style={{paddingBottom: "10px"}}>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
+                                    <div className="col-md-2"><br/><br/><p className="trip__details__down" onClick={this.infoBlock(key)} style={{color: '#D50707'}}>Детали рейса</p></div>
+                                    <p style={{paddingBottom: "10px"}} className="mobilePerevozchik">Перевозчик: {list.carrier}<br/>Рейс: {list.racename}</p>
                                 </div>
 
                             </div>
+                            <br/>
                                 <Racedetailblock list={list}/>
                             {/*end new show*/}
                             {this.state.goback ?
@@ -1764,18 +2459,20 @@ class Finder extends React.Component{
                                                 <p className='textPrice' style={{float: 'right'}}>{list.backPrice} {list.currName}</p>
                                             </div>
                                             <div className='rightShowBlock'>
-                                                <button className="butTic" onClick={() => this.showByTic(list.fullPrice, list.currency, list.backRacename, list.backDtArr, list.backStArrName, list.backDtDep, list.backStDepAddr, this.state.passengers, list.currName, list.id, list.tripId)}>Выбрать</button>
+                                                <button className="butTic"  onClick={() => this.showByTic(list.price, list.currency, list.racename, list.dtArr, list.stArrName, list.stDepName, list.dtDep, list.stDepAddr, list.stArrAddr, this.state.passengers, list.currName, list.id, list.tripId, key)}>Выбрать</button>
                                                 <br/>
-                                                <p className='textPass' style={{color: 'red'}}>{list.backPlaces} мест</p>
+                                                <p className='textPass' style={{color: '#D50707'}}>{list.backPlaces} мест</p>
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div className='botShowBlock'>
-                                        <div className="col-md-2"><p className="trip__details__down" onClick={this.infoBlockBack(key)} style={{color: 'red'}}>Детали рейса</p></div>
-                                        <p style={{paddingBottom: "10px"}}>Перевозчик: {list.racename}.        Автобус: {list.backBusName}</p>
+                                        <div className="col-md-2"><p className="trip__details__down" onClick={this.infoBlockBack(key)} style={{color: '#D50707'}}>Детали рейса</p></div>
+                                        <p style={{paddingBottom: "10px"}} className="mobilePerevozchik">Перевозчик: {list.backCarrier}<br/>Рейс: {list.backRacename}</p>
                                     </div>
-
+                                    
                                 </div>
+                                <br/>
                                 <Racedetailblockback list={list}/></div>
                                 : null}
                         </div>
@@ -1784,10 +2481,17 @@ class Finder extends React.Component{
                 </div>
                 {/*блок авторизации и входа линый кабинет*/}
 
+                
+
                 <div className="topFix">
                     <button style={{display: this.state.showByTic}} onClick={this.backStup}>Назад</button>
-                </div>
+                                
+                </div>       
+
+
                 <div className="cabin" style={{display: this.state.showByTic}}>
+
+
                     <div className="checkout col-md-8">
                         <div className="m-verify-panel__item checkout-panel">
                             <div className="row-slim m-verify-panel__item-row">
@@ -1845,32 +2549,39 @@ class Finder extends React.Component{
                                         <div className="row-slim">
                                             <div>
                                                 <div className="verify-panel__picker">
-                                                    <div className={'verify-panel__picker-btn enabled ' + this.state.seatBlockClass}>
-                                                        <button  className="btn free" onClick={this.showSeats.bind(this,this.state.matrix)}>
+                                                    { this.state.matrix[0] ?
+                                                    <div className={'verify-panel__picker-btn enabled ' + this.state.seatBlockClass} >
+                                                        <button  className="btn free" onClick={this.showSeats.bind(this,this.state.matrix)} >
                                                             <span><i className="icon icon-seat-v2"></i></span><span
                                                             className="verify-panel__picker-description">
-                                                            <p id={'seatsQuantity'}>  Количество мест: {this.state.passengers} </p>
+                                                                
+                                                            <p id={'seatsQuantity'} >  Количество мест: {this.state.passengers} </p>
                                                         </span>
                                                         </button>
                                                         <label  style={{display: this.state.seatErrorBlock}} className="error control-label"
                                                                 htmlFor="none">Выберите места!</label>
                                                     </div>
+                                                    :
+                                                    <div><p className="freeChoice">Свободная рассадка</p></div>
+                                                    }
                                                     <div className="thereMatrix" style={{display: this.state.showSeatsBlock ? 'grid' : 'none', grid:'repeat(this.state.seatsRows,5px) / repeat(this.state.seatsColumns,5px)'}}>
                                                         {this.state.matrix[0] ? this.state.matrix[0].map((el, i) => {
-                                                            console.log(el+'array');
+                                                            //console.log(el+'array');
                                                             return (
                                                                 <div key={i}>
                                                                     {el.map((ryad, ii) => {
-                                                                console.log('asd'+ryad);
+                                                                //console.log('asd'+ryad);
                                                                 return (
-                                                                    <div onClick={this.selectPlace.bind(this, ryad, i, ii)} key={ii} style={{border: ryad.selected ? '1px solid green' : '1px solid black', padding: '5px', textAlign: 'center',
-                                                                     margin: '3px', width: '28px', float:'left', cursor: ryad.free ? 'pointer' : 'no-drop', color: ryad.free ? 'black' : 'gray', backgroundColor: ryad.selected ? 'green' : 'white',
-                                                                    }}>{ryad.n}</div>
+                                                                    <div className="divWidth" onClick={this.selectPlace.bind(this, ryad, i, ii)} key={ii} style={{borderRadius: '5px', padding: '5px', textAlign: 'center',
+                                                                     margin: '3px', width: '28px', height: '28px', float:'left', cursor: ryad.free ? 'pointer' : 'no-drop', color: ryad.free ? 'black' : 'white', border: ryad.free ? '2px solid green' : '',
+                                                                     backgroundColor: ryad.selected ? 'green' : ryad.free ? 'white' : ryad.n ? 'gray' : 'white',
+                                                                }}>{ryad.n}</div>
                                                                 )
                                                             })}
                                                             <br/>
                                                                         </div>)
                                                         }) : ''}
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -1879,6 +2590,58 @@ class Finder extends React.Component{
                                 </div>
                             </div>
                         </div>
+                        
+                    
+
+
+    { this.state.arrTicTwo.map((list, key) =>
+    <div key={key} className="" >
+
+        {this.state.showDetails ?    
+            <div className="details" style={{display: this.state.showDetails ? 'block' : 'none'}}>        
+                <div className="aboutDetails"><h5>О рейсе</h5></div>                    
+                    <p className="detailsMonth"> 
+                    <Moment format="D MMM" withTitle>
+                        {list.dtDep}
+                    </Moment>
+                    </p>  
+                    <p className="detailsHours">
+                    <Moment format="HH:MM" withTitle>
+                        {list.dtDep}
+                    </Moment>
+                    </p>
+                                 
+                
+                    <p className="detailsFromP">{list.stDepName}</p>
+                    
+                    <p className="detailsFromP">{list.stDepAddr}</p>
+                    <p className="detailsMonth"> 
+                    <Moment format="D MMM" withTitle>
+                        {list.dtArr}
+                    </Moment>
+                    </p>  
+                    <p className="detailsHours">
+                        <Moment format="HH:MM" withTitle>
+                            {list.dtArr}
+                        </Moment>
+                    </p>
+              
+                
+                    <p className="detailsFromP">{list.stArrName}</p>
+                    
+                    <p className="detailsFromP">{list.stArrAddr}</p>
+            
+                    <div className="priceDetail">
+                    <p className="priceDetailText">  <p className="priceDetailTextT">К оплате:</p> {this.state.priceBy} {this.state.currNameBy}</p>
+                    </div>
+            </div>
+        :null}
+    </div>        
+    )}
+
+
+
+                        
                         <div className="checkout-panel checkout__customer"><p
                             className="checkout__customer-title">Информация о покупателе</p><p
                             className="checkout__customer-text">Указывайте корректные e-mail и номер телефона, т.к. они
@@ -1995,7 +2758,7 @@ class Finder extends React.Component{
 
                             </div>
                         )}
-                        <div className="checkout-panel checkout__customer"><p
+                        {/* <div className="checkout-panel checkout__customer"><p
                             className="checkout__customer-title">Информация о рейсе</p><p
                             className="checkout__customer-text">
                             Рейс: {this.state.tripInfForBy} <br/>
@@ -2006,10 +2769,12 @@ class Finder extends React.Component{
                         </p>
 
 
-                        </div>
+                        </div> */}
                         <div className="checkout-panel checkout__payment">
-                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy} <br/><span style={{fontSize:'14px',color:'red'}}>{this.state.promoCodeName}</span></div>
+                            <div className="checkout__payment-header">К оплате {this.state.priceBy} {this.state.currNameBy} <br/><span style={{fontSize:'14px',color:'#D50707'}}>{this.state.promoCodeName}</span></div>
                             <div className="checkout__payment-promo">
+
+                                
                                 <label htmlFor="promoInput">Введите промокод</label>
                                     <input type="text"
                                            name="promoInput"
@@ -2019,12 +2784,19 @@ class Finder extends React.Component{
                                     /><button onClick={this.promocodeRequest}
                                               className="promoButton"
                                               type="submit"
-                                              style={{backgroundColor: 'white', border: '1px solid black'}}>OK</button>
-                            <div style={{color:'red', display: this.state.showRegOffer ? 'block' : 'none'}}> Невозможно определить покупателя.Возможно Вы не зарегистирированы в системе,либо не осуществили вход<br/></div>
+                                              style={{color: 'white', backgroundColor: '#D50707', width: '100px'}}>OK</button>
+
+                            <div style={{color:'#D50707', display: this.state.showRegOffer ? 'block' : 'none'}}> Невозможно определить покупателя.Возможно Вы не зарегистирированы в системе,либо не осуществили вход<br/></div>
                             </div>
                             <div className="checkout__payment-info">
                                 <div className="checkout__payment-info-text"><br/>Ваши платежные и личные данные надежно
-                                    защищены в соответствии с международными стандартами безопасности.
+                                    защищены в соответствии с международными стандартами безопасности.<br/><br/>
+                                    <div>
+                                        <input id="checkboxInput" type="checkbox" onChange={this.handleCheck} defaultChecked={this.state.checkboxOffer}></input>
+                                        <label className="checkboxLabel" htmlFor="checkboxInput">Я принимаю условия возврата, публичной <a className="offer" href="http://new.viabona.com.ua/oferta/" target="_blank">оферты</a> и даю согласие на обработку персональных данных.
+                                        </label>
+                                    </div>
+                                    
                                 </div>
                                 <div className="checkout__payment-info-icons">
                                     <div className="filling-info__pay-item filling-info__pay-maestro"></div>
@@ -2036,11 +2808,13 @@ class Finder extends React.Component{
 
                         </div>
                         <div className="checkout-submit-btn">
+                            <button disabled = {this.state.checkboxOffer ? "" : "disabled"} onClick={() => this.setReserve(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)} className="reserveButton" type="submit"
+                                    style={{backgroundColor: '#D50707', color: 'white', cursor: this.state.checkboxOffer ? "pointer" : "not-allowed"}}>Забронировать</button>
                             {
                                 this.state.showBuyNext ?
-                                    <button className="butTictwo" type="submit" style={{backgroundColor: 'white', border: '1px solid black'}}
+                                    <button disabled = {this.state.checkboxOffer ? "" : "disabled"} className="butTictwo" type="submit" style={{backgroundColor: '#D50707', color: 'white', cursor: this.state.checkboxOffer ? "pointer" : "not-allowed"}}
                                             onClick={() => this.PayArr(this.state.nameS, this.state.surnameS, this.state.emailS, this.state.phoneS)}>
-                                        Продолжить
+                                        Купить
                                     </button>
 
                                     :
@@ -2060,11 +2834,25 @@ class Finder extends React.Component{
                             личные данные надежно защищены.</p></div>
                     </div>
                 </div>
+                <div className="offerShow" style={{display: this.state.offerShow ? 'block' : 'none'}}>*/}
+                    <div className="col flex">
+                        <div>{this.state.offer}</div>
+                    </div>
+                </div>
+                {this.state.offerShow ?
+                    <Offerblock offer = {this.state.offer}/>
+
+                    :
+                    null
+                }
+
             </div>
+
                 <React.Fragment>
                     <Lines customLoading={this.state.loading} />
                 </React.Fragment>
             </div>
+
 
         )
     }
